@@ -1,4 +1,4 @@
 package Database.Models;
 
-public class CrawlDetails {
+public class Action {
 }
