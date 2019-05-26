@@ -8,5 +8,11 @@ public class CrawlerController {
         return null;
     }
 
+    public HttpResponse GetItem(String baseUrl, String type, String searchValue){
+        return null;
+    }
 
+    public HttpResponse GetLastCrawlAction() {
+        return null;
+    }
 }
