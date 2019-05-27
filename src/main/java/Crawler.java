@@ -8,6 +8,12 @@ public class Crawler implements ICrawler {
 
     private IScraper scraper;
 
+    private Action lastScrape;
+
+    public Crawler(IScraper scrapper){
+
+    }
+
     private Scrape CrawWebsite(String baseUrl, Scrape currentScrape, Action currentAction){
         return null;
     }
