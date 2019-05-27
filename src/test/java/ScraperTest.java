@@ -2,10 +2,6 @@ import org.junit.Test;
 
 public class ScraperTest {
     @Test
-    public void Scraper_NoErrorThrown() {
-    }
-
-    @Test
     public void GetScrape_ReturnScrapeObject() {
     }
 
