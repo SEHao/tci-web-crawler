@@ -1,13 +1,15 @@
-class CrawlerTest extends GroovyTestCase {
+import org.junit.Test;
+
+class CrawlerTest {
 
     @Test
     public void Crawler_Successful_WhenValidIScrapperIsPassed(){}
 
     @Test
-    public void Crawler_ThrowsIlegalArgumentException_WhenNullIScraperIsPassed(){}
+    public void Crawler_ThrowsIllegalArgumentException_WhenNullIScraperIsPassed(){}
 
     @Test
-    public void Crawler_Successsfull_ValidateScraperIsAssigned(){}
+    public void Crawler_Successful_ValidateScraperIsAssigned(){}
 
     @Test
     public void StoreCrawlRecord_ReturnsTrue_WhenAValidActionObjectIsPassed(){}
@@ -49,7 +51,7 @@ class CrawlerTest extends GroovyTestCase {
     public void FindItem_ThrowsIllegalArgumentException_WhenItemTypeIsNotValid(){}
 
     @Test
-    public void FindItem_ThrowsIllegalArugmentException_WhenItemTypeIsNull(){}
+    public void FindItem_ThrowsIllegalArgumentException_WhenItemTypeIsNull(){}
 
     @Test
     public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsEmpty(){}
@@ -58,7 +60,7 @@ class CrawlerTest extends GroovyTestCase {
     public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsNull(){}
 
     @Test
-    public void CrawlWebsite_ReturnsScrape_Succesfull(){}
+    public void CrawlWebsite_ReturnsScrape_Successful(){}
 
     @Test
     public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNull(){}
@@ -67,15 +69,18 @@ class CrawlerTest extends GroovyTestCase {
     public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNotValid(){}
 
     @Test
-    public void CrawlWebsite_ThrowsIllegalArugmentException_WhenCurrentScrapeIsNull(){}
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentScrapeIsNull(){}
 
     @Test
-    public void CrawlWebsite_ThrowsIllegalArugmentException_WhenCurrentActionIsNull(){}
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentActionIsNull(){}
 
     @Test
     public void CrawlWebsite_DoesNotUpdateScrape_WhenThereIsNoNewDataOnPageToScrape(){}
 
     @Test
     public void CrawlWebsite_UpdatesDataInScrape_WhenThereIsNewDataInThePage(){}
+
+    @Test
+    public void CrawlWebsite_Successful_UntilSpecifiedDept(){}
 }
 
