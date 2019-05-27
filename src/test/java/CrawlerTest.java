@@ -10,25 +10,25 @@ class CrawlerTest extends GroovyTestCase {
     public void Crawler_Successsfull_ValidateScraperIsAssigned(){}
 
     @Test
-    public void StoreCrawRecord_ReturnsTrue_WhenAValidActionObjectIsPassed(){}
+    public void StoreCrawlRecord_ReturnsTrue_WhenAValidActionObjectIsPassed(){}
 
     @Test
-    public void StoreCrawRecord_ReturnsFalse_WhenNullActionObjectIsPassed(){}
+    public void StoreCrawlRecord_ReturnsFalse_WhenNullActionObjectIsPassed(){}
 
     @Test
-    public void StoreCrawRecord_ReturnsFalse_WhenActionDoesNotHaveAnId(){}
+    public void StoreCrawlRecord_ReturnsFalse_WhenActionDoesNotHaveAnId(){}
 
     @Test
-    public void StoreCrawRecord_ReturnsTrue_ValidatePrivateFieldHasBeenUpdated(){}
+    public void StoreCrawlRecord_ReturnsTrue_ValidatePrivateFieldHasBeenUpdated(){}
 
     @Test
-    public void CrawWholeWebsite_ReturnsValidScrape_WhenValidUrlIsPassed(){}
+    public void CrawlWholeWebsite_ReturnsValidScrape_WhenValidUrlIsPassed(){}
 
     @Test
-    public void CrawWholeWebsite_ThrowsIllegalArgumentException_WhenInvalidUrlIsPassed(){}
+    public void CrawlWholeWebsite_ThrowsIllegalArgumentException_WhenInvalidUrlIsPassed(){}
 
     @Test
-    public void CrawWHoleWebsite_ThrowsIllegalArgumentException_WhenNullUrlIsPassed(){}
+    public void CrawlWHoleWebsite_ThrowsIllegalArgumentException_WhenNullUrlIsPassed(){}
 
     @Test
     public void GetLastAction_ReturnsLastAction_Successful(){}
@@ -58,24 +58,24 @@ class CrawlerTest extends GroovyTestCase {
     public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsNull(){}
 
     @Test
-    public void CrawWebsite_ReturnsScrape_Succesfull(){}
+    public void CrawlWebsite_ReturnsScrape_Succesfull(){}
 
     @Test
-    public void CrawWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNull(){}
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNull(){}
 
     @Test
-    public void CrawWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNotValid(){}
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNotValid(){}
 
     @Test
-    public void CrawWebsite_ThrowsIllegalArugmentException_WhenCurrentScrapeIsNull(){}
+    public void CrawlWebsite_ThrowsIllegalArugmentException_WhenCurrentScrapeIsNull(){}
 
     @Test
-    public void CrawWebsite_ThrowsIllegalArugmentException_WhenCurrentActionIsNull(){}
+    public void CrawlWebsite_ThrowsIllegalArugmentException_WhenCurrentActionIsNull(){}
 
     @Test
-    public void CrawWebsite_DoesNotUpdateScrape_WhenThereIsNoNewDataOnPageToScrape(){}
+    public void CrawlWebsite_DoesNotUpdateScrape_WhenThereIsNoNewDataOnPageToScrape(){}
 
     @Test
-    public void CrawWebsite_UpdatesDataInScrape_WhenThereIsNewDataInThePage(){}
+    public void CrawlWebsite_UpdatesDataInScrape_WhenThereIsNewDataInThePage(){}
 }
 
