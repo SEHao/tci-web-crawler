@@ -5,15 +5,14 @@ import org.w3c.dom.Document;
 
 public class Scraper implements IScraper {
 
-
     /**
      * Scrapes a Document produced by Jsoup and returns a Scrape object.
-     * @param docuement The Jsoup document that should be scraped.
+     * @param document The Jsoup document that should be scraped.
      * @return Returns the scrape object after the craw has been completed.
      * Returns null if the document is empty.
      */
     @Override
-    public Scrape GetScrape(Document docuement) {
+    public Scrape GetScrape(Document document) {
         return null;
     }
 
@@ -22,8 +21,7 @@ public class Scraper implements IScraper {
      * @param document The document that the item has to be found in.
      * @param type The type of the item that has to be found (Music, Movie, Book)
      * @param value The name of the item that has to be found.
-     * @return Returns an Item if it can be found in the document. Returns null if the document is empty
-     * or the item can't be found.
+     * @return Returns an Item if it can be found in the document. Returns null if the item can't be found.
      */
     @Override
     public Item FindItem(Document document, String type, String value) {
