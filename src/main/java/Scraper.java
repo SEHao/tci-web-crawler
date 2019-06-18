@@ -3,6 +3,7 @@ import Models.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -38,39 +39,43 @@ public class Scraper implements IScraper {
         scrape.setMusic(musics);
         scrape.setBooks(books);
 
-        Element mediaDetails = document.selectFirst(mediaDetailsQuery);
+        try {
+            Element mediaDetails = document.selectFirst(mediaDetailsQuery);
 
-        if (mediaDetails == null) {
-            return scrape;
-        }
+            if (mediaDetails == null) {
+                return scrape;
+            }
 
-        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
+            Elements rows = mediaDetails.select(mediaDetailRowsQuery);
 
-        String category = "";
-        for (Element row : rows) {
-            String key = row.selectFirst("th").text();
-            if (key.equals("Category")) {
-                category = row.selectFirst("td").text();
-                break;
+            String category = "";
+            for (Element row : rows) {
+                String key = row.selectFirst("th").text();
+                if (key.equals("Category")) {
+                    category = row.selectFirst("td").text();
+                    break;
+                }
             }
-        }
 
-        switch (category) {
-            case "Movies": {
-                Movie parsedMovie = this.parseMovie(mediaDetails);
-                movies.add(parsedMovie);
-                break;
+            switch (category) {
+                case "Movies": {
+                    Movie parsedMovie = this.parseMovie(mediaDetails);
+                    movies.add(parsedMovie);
+                    break;
+                }
+                case "Books": {
+                    Book parsedBook = this.parseBook(mediaDetails);
+                    books.add(parsedBook);
+                    break;
+                }
+                case "Music": {
+                    Music music = this.parseMusic(mediaDetails);
+                    musics.add(music);
+                    break;
+                }
             }
-            case "Books": {
-                Book parsedBook = this.parseBook(mediaDetails);
-                books.add(parsedBook);
-                break;
-            }
-            case "Music": {
-                Music music = this.parseMusic(mediaDetails);
-                musics.add(music);
-                break;
-            }
+        } catch (Selector.SelectorParseException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
 
         return scrape;
