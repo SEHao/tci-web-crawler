@@ -1,3 +1,4 @@
+import Models.Book;
 import Models.Movie;
 import Models.Scrape;
 import org.apache.commons.io.FileUtils;
@@ -69,6 +70,52 @@ public class ScraperTest {
         assertEquals(0, result.getMusic().size());
         assertEquals(1, result.getMovies().size());
         assertEquals(expectedMovie, result.getMovies().get(0));
+    }
+
+    @Test
+    public void GetScrape_ReturnScrapeObjectWithBook() {
+        // Arrange
+        Scraper scraper = new Scraper();
+
+        List<String> authors = new ArrayList<>();
+        authors.add("Martin Fowler");
+        authors.add("Kent Beck");
+        authors.add("John Brant");
+        authors.add("William Opdyke");
+        authors.add("Don Roberts");
+
+        Book expectedBook = new Book(
+                "Refactoring: Improving the Design of Existing Code",
+                1999,
+                "Hardcover",
+                "Tech",
+                authors,
+                "Addison-Wesley Professional",
+                "978-0201485677"
+        );
+
+        File htmlTemplateFile = new File("res/TestFiles/refactoring.html");
+
+        Document document = null;
+        try {
+            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
+            document = Jsoup.parse(htmlString);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        // Act
+        Scrape result = scraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(1, result.getBooks().size());
+        assertEquals(0, result.getMusic().size());
+        assertEquals(0, result.getMovies().size());
+        assertEquals(expectedBook, result.getBooks().get(0));
     }
 
     @Test
