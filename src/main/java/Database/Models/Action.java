@@ -4,7 +4,7 @@ public class Action {
 
     public Integer Id;
 
-    public String TimeElapsed;
+    public long TimeElapsed;
 
     public Integer PagesExplored;
 
@@ -16,7 +16,7 @@ public class Action {
         return Id;
     }
 
-    public String getTimeElapsed() {
+    public long getTimeElapsed() {
         return TimeElapsed;
     }
 
@@ -36,7 +36,7 @@ public class Action {
         Id = id;
     }
 
-    public void setTimeElapsed(String timeElapsed) {
+    public void setTimeElapsed(long timeElapsed) {
         TimeElapsed = timeElapsed;
     }
 
@@ -52,7 +52,7 @@ public class Action {
         SearchDepth = searchDepth;
     }
 
-    public Action(Integer id, String timeElapsed, Integer pagesExplored, Integer uniquePagesFound, Integer searchDepth) {
+    public Action(Integer id, long timeElapsed, Integer pagesExplored, Integer uniquePagesFound, Integer searchDepth) {
         Id = id;
         TimeElapsed = timeElapsed;
         PagesExplored = pagesExplored;
