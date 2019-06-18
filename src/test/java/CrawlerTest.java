@@ -437,7 +437,7 @@ public class CrawlerTest {
         );
 
         Scrape newScrape = initialScrape;
-        music.add(new Music("Song", 1995, "mp3", "Group" ));
+        music.add(new Music("Song", 1995, "mp3", "Group", "pop" ));
         newScrape.setMusic(music);
 
         Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
@@ -687,7 +687,7 @@ public class CrawlerTest {
         );
 
         Scrape secondScrape = initialScrape;
-        music.add(new Music("Song", 1995, "mp3", "Group" ));
+        music.add(new Music("Song", 1995, "mp3", "Group", "pop" ));
         secondScrape.setMusic(music);
 //        String name, Integer year, String format, String genre, List<String> author, String publisher, String ISBN
         books.add(new Book(
@@ -716,15 +716,22 @@ public class CrawlerTest {
         Assert.assertEquals("Group" ,resultingScrape.getMusic().get(0).getArtist());
     }
 
-//    @Test
-//    public void DoStuff(){
-//        IScraper Scrapper = new Scraper();
-//
-//        IDocumentRetriever documentRetriever = new DocumentRetriever();
-//
-//        Crawler crawler = new Crawler(Scrapper, documentRetriever);
-//
-//        crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
-//    }
+    @Test
+    public void DoStuff(){
+        try
+        {
+            IScraper Scrapper = new Scraper();
+
+            IDocumentRetriever documentRetriever = new DocumentRetriever();
+
+            Crawler crawler = new Crawler(Scrapper, documentRetriever);
+
+            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+        }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
 }
 

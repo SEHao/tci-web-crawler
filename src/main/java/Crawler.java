@@ -140,7 +140,7 @@ public class Crawler implements ICrawler {
         List<String> allLinksOnPage = new ArrayList<>();
 
         for(Element link: links){
-            allLinksOnPage.add(link.attr("href"));
+            allLinksOnPage.add(link.attr("abs:href"));
         }
 
         // add links to number of all pages visited
@@ -150,13 +150,19 @@ public class Crawler implements ICrawler {
         }
 
         //remove duplicates from list by adding them to a hashSet
-        HashSet<String> hashSetLinks = new HashSet<>();
+        HashSet<String> hashSetLinks = new HashSet<>(allLinksOnPage);
+        List<String> pagesToRemove = new ArrayList<>();
 
-        // Remove items from hashSet that have already been visited.
+        // Get items from hashSet that have already been visited.
         for(String link : hashSetLinks){
             if(uniqueVisitedPages.contains(link)){
-                hashSetLinks.remove(link);
+                pagesToRemove.add(link);
             }
+        }
+
+        // Remove items from hash set that have already been visited
+        for(String page : pagesToRemove){
+            hashSetLinks.remove(page);
         }
 
         for(String link : hashSetLinks){
