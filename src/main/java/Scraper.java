@@ -55,6 +55,36 @@ public class Scraper implements IScraper {
                 books.add(parsedBook);
                 break;
             }
+            case "Music": {
+                Music music = new Music();
+                music.setName(mediaDetails.selectFirst("h1").text());
+
+                for (Element row : rows) {
+                    String key = row.selectFirst("th").text();
+                    String value = row.selectFirst("td").text();
+                    switch (key) {
+                        case "Genre": {
+                            music.setGenre(value);
+                            break;
+                        }
+                        case "Format": {
+                            music.setFormat(value);
+                            break;
+                        }
+                        case "Year": {
+                            music.setYear(Integer.parseInt(value));
+                            break;
+                        }
+                        case "Artist": {
+                            music.setArtist(value);
+                            break;
+                        }
+                    }
+                }
+
+                musics.add(music);
+                break;
+            }
         }
 
         return scrape;
