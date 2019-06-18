@@ -163,7 +163,7 @@ public class ScraperTest {
                 .thenThrow(Selector.SelectorParseException.class);
 
         // Act
-        Scrape result = defaultScraper.GetScrape(document);
+        defaultScraper.GetScrape(document);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -177,13 +177,13 @@ public class ScraperTest {
                 .thenReturn(element);
 
         // Act
-        Scrape result = defaultScraper.GetScrape(document);
+        defaultScraper.GetScrape(document);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
         // Act
-        Scrape result = defaultScraper.GetScrape(null);
+        defaultScraper.GetScrape(null);
     }
 
     @Test
