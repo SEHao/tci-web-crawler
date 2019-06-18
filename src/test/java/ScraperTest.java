@@ -3,6 +3,7 @@ import Models.Scrape;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -13,11 +14,10 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ScraperTest {
-    @Test
-    public void GetScrape_ReturnScrapeObject() {
-        // Arrange
-        Scraper scraper = new Scraper();
+    private Movie lordOfTheRingsMovie;
 
+    @Before
+    public void setUp() {
         List<String> writers = new ArrayList<>();
         writers.add("J.R.R. Tolkien");
         writers.add("Fran Walsh");
@@ -32,7 +32,7 @@ public class ScraperTest {
         stars.add("Diedrich Bader");
         stars.add("Stephen Root");
 
-        Movie expectedMovie = new Movie(
+        lordOfTheRingsMovie = new Movie(
                 "The Lord of the Rings: The Fellowship of the Ring",
                 2001,
                 "Blu-ray",
@@ -41,7 +41,13 @@ public class ScraperTest {
                 "Drama",
                 stars
         );
+    }
 
+    @Test
+    public void GetScrape_ReturnScrapeObjectWithMovie() {
+        // Arrange
+        Scraper scraper = new Scraper();
+        Movie expectedMovie = lordOfTheRingsMovie;
         File htmlTemplateFile = new File("res/TestFiles/lord_of_the_rings.html");
         Document document = null;
         try {

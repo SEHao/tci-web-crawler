@@ -24,7 +24,6 @@ public class Scraper implements IScraper {
         List<Movie> movies = new ArrayList<>();
         List<Music> musics = new ArrayList<>();
         List<Book> books = new ArrayList<>();
-        Movie movie = new Movie();
 
         Scrape scrape = new Scrape();
         scrape.setId(UUID.randomUUID().toString());
@@ -34,6 +33,16 @@ public class Scraper implements IScraper {
         scrape.setBooks(books);
 
         Element mediaDetails = document.selectFirst("div.media-details");
+
+        Movie parsedMovie = this.parseMovie(mediaDetails);
+        movies.add(parsedMovie);
+
+        return scrape;
+    }
+
+    private Movie parseMovie(Element mediaDetails) {
+        Movie movie = new Movie();
+
         movie.setName(mediaDetails.selectFirst("h1").text());
 
         Elements rows = mediaDetails.select("table tbody tr");
@@ -69,9 +78,7 @@ public class Scraper implements IScraper {
             }
         }
 
-        movies.add(movie);
-
-        return scrape;
+        return movie;
     }
 
     /**
