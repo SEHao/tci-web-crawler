@@ -1,8 +1,8 @@
 package Interfaces;
 
 import Models.Item;
-import org.jsoup.nodes.Document;
 import Models.Scrape;
+import org.jsoup.nodes.Document;
 
 public interface IScraper {
 
