@@ -1,23 +1,42 @@
 package Models;
 
+import java.util.Objects;
+
 public class Music extends Item {
 
-    public String Artist;
+    private String artist;
 
     public String getArtist() {
-        return Artist;
+        return artist;
     }
 
     public void setArtist(String artist) {
-        Artist = artist;
+        this.artist = artist;
     }
 
     public Music(String artist) {
-        Artist = artist;
+        this.artist = artist;
     }
 
     public Music(String name, Integer year, String format, String artist) {
         super(name, year, format);
-        Artist = artist;
+        this.artist = artist;
+    }
+
+    public Music() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Music music = (Music) o;
+        return Objects.equals(artist, music.artist);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), artist);
     }
 }

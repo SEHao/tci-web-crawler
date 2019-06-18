@@ -1,61 +1,78 @@
 package Models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Book extends Item{
 
-    public String Genre;
-
-    public List<String> Author;
-
-    public String Publisher;
-
-    public String ISBN;
+    private String genre;
+    private List<String> author;
+    private String publisher;
+    private String isbn;
 
     public String getGenre() {
-        return Genre;
+        return genre;
     }
 
     public List<String> getAuthor() {
-        return Author;
+        return author;
     }
 
     public String getPublisher() {
-        return Publisher;
+        return publisher;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getIsbn() {
+        return isbn;
     }
 
     public void setGenre(String genre) {
-        Genre = genre;
+        this.genre = genre;
     }
 
     public void setAuthor(List<String> author) {
-        Author = author;
+        this.author = author;
     }
 
     public void setPublisher(String publisher) {
-        Publisher = publisher;
+        this.publisher = publisher;
     }
 
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 
-    public Book(String genre, List<String> author, String publisher, String ISBN) {
-        Genre = genre;
-        Author = author;
-        Publisher = publisher;
-        this.ISBN = ISBN;
+    public Book(String genre, List<String> author, String publisher, String isbn) {
+        this.genre = genre;
+        this.author = author;
+        this.publisher = publisher;
+        this.isbn = isbn;
     }
 
-    public Book(String name, Integer year, String format, String genre, List<String> author, String publisher, String ISBN) {
+    public Book(String name, Integer year, String format, String genre, List<String> author, String publisher, String isbn) {
         super(name, year, format);
-        Genre = genre;
-        Author = author;
-        Publisher = publisher;
-        this.ISBN = ISBN;
+        this.genre = genre;
+        this.author = author;
+        this.publisher = publisher;
+        this.isbn = isbn;
+    }
+
+    public Book() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(genre, book.genre) &&
+                Objects.equals(author, book.author) &&
+                Objects.equals(publisher, book.publisher) &&
+                Objects.equals(isbn, book.isbn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(genre, author, publisher, isbn);
     }
 }
