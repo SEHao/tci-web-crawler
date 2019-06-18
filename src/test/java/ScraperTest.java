@@ -19,6 +19,7 @@ public class ScraperTest {
     private Movie lordOfTheRingsMovie;
     private Book refactoringBook;
     private Music elvisForeverMusic;
+    private Scraper defaultScraper;
 
     @Before
     public void setUp() {
@@ -70,17 +71,18 @@ public class ScraperTest {
                 "Elvis Presley",
                 "Rock"
         );
+
+        defaultScraper = new Scraper();
     }
 
     @Test
     public void GetScrape_ReturnScrapeObjectWithMovie_WhenPageContainsMovieDetails() {
         // Arrange
-        Scraper scraper = new Scraper();
         Movie expectedMovie = lordOfTheRingsMovie;
         Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
 
         // Act
-        Scrape result = scraper.GetScrape(document);
+        Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
         assertNotNull(result);
@@ -96,12 +98,11 @@ public class ScraperTest {
     @Test
     public void GetScrape_ReturnScrapeObjectWithBook_WhenPageContainsBookDetails() {
         // Arrange
-        Scraper scraper = new Scraper();
         Book expectedBook = refactoringBook;
         Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
 
         // Act
-        Scrape result = scraper.GetScrape(document);
+        Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
         assertNotNull(result);
@@ -117,12 +118,11 @@ public class ScraperTest {
     @Test
     public void GetScrape_ReturnScrapeObjectWithMusic_WhenPageContainsMusicDetails() {
         // Arrange
-        Scraper scraper = new Scraper();
         Music expectedMusic = elvisForeverMusic;
         Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
 
         // Act
-        Scrape result = scraper.GetScrape(document);
+        Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
         assertNotNull(result);
@@ -138,11 +138,10 @@ public class ScraperTest {
     @Test
     public void GetScrape_ReturnObjectOfEmptyList_WhenPageDoesNotContainAnyItem() {
         // Arrange
-        Scraper scraper = new Scraper();
         Document document = this.loadDocumentFromFile("res/TestFiles/catalog.html");
 
         // Act
-        Scrape result = scraper.GetScrape(document);
+        Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
         assertNotNull(result);
@@ -156,11 +155,8 @@ public class ScraperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
-        // Arrange
-        Scraper scraper = new Scraper();
-
         // Act
-        Scrape result = scraper.GetScrape(null);
+        Scrape result = defaultScraper.GetScrape(null);
     }
 
     @Test
