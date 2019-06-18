@@ -1,18 +1,19 @@
 package Controllers;
 
+import javax.ws.rs.core.Response;
 import java.net.http.HttpResponse;
 
 public class CrawlerController {
 
-    public HttpResponse GetScrapesOfWholeWebsite(String baseUrl){
+    public Response GetScrapesOfWholeWebsite(String baseUrl){
         return null;
     }
 
-    public HttpResponse GetItem(String baseUrl, String type, String searchValue){
+    public Response GetItem(String baseUrl, String type, String searchValue){
         return null;
     }
 
-    public HttpResponse GetLastCrawlAction() {
+    public Response GetLastCrawlAction() {
         return null;
     }
 }

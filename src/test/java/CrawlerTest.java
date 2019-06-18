@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class CrawlerTest {
+public class CrawlerTest {
 
     @Test
     public void Crawler_Successful_WhenValidIScrapperIsPassed()
