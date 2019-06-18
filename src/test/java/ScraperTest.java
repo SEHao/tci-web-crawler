@@ -1,5 +1,6 @@
 import Models.Book;
 import Models.Movie;
+import Models.Music;
 import Models.Scrape;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
@@ -119,6 +120,43 @@ public class ScraperTest {
         assertEquals(0, result.getMusic().size());
         assertEquals(0, result.getMovies().size());
         assertEquals(expectedBook, result.getBooks().get(0));
+    }
+
+    @Test
+    public void GetScrape_ReturnScrapeObjectWithMusic() {
+        // Arrange
+        Scraper scraper = new Scraper();
+
+        Music expectedMusic = new Music(
+                "Elvis Forever",
+                2015,
+                "Vinyl",
+                "Elvis Presley",
+                "Rock"
+        );
+
+        File htmlTemplateFile = new File("res/TestFiles/elvis_forever.html");
+
+        Document document = null;
+        try {
+            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
+            document = Jsoup.parse(htmlString);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        // Act
+        Scrape result = scraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(0, result.getBooks().size());
+        assertEquals(1, result.getMusic().size());
+        assertEquals(0, result.getMovies().size());
+        assertEquals(expectedMusic, result.getMusic().get(0));
     }
 
     @Test
