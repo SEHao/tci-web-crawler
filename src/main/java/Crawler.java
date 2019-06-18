@@ -3,7 +3,13 @@ import Interfaces.ICrawler;
 import Interfaces.IScraper;
 import Models.Item;
 import Models.Scrape;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.jar.JarEntry;
 
 
 public class Crawler implements ICrawler {
@@ -47,6 +53,28 @@ public class Crawler implements ICrawler {
 
     public Document GetDocument(String url)
     {
+        try{
+            if (url == null){
+                throw new
+                        IllegalArgumentException("Could not create document because passed URL was null");
+            }
+
+            if (url.isEmpty()){
+                throw new
+                        IllegalArgumentException("Could not create document because passed URL was empty");
+            }
+
+            URL formatedUrl = new URL(url);
+
+            Document document = Jsoup.connect(formatedUrl.toString()).timeout(6000).get();
+            return document;
+        }
+        catch (MalformedURLException e) {
+            throw new
+                    IllegalArgumentException("Could not create document submited imput was not a valid URL");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

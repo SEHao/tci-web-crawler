@@ -398,7 +398,7 @@ public class CrawlerTest {
                 movies,
                 music,
                 books
-            );
+        );
 
         Scrape newScrape = initialScrape;
         newScrape.Music.add(new Music("Song", 1995, "mp3", "Group" ));
