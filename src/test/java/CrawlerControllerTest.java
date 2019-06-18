@@ -1,10 +1,8 @@
 import Controllers.CrawlerController;
+import Database.Models.Action;
 import Interfaces.ICrawler;
 import Interfaces.IScraper;
-import Models.Book;
-import Models.Movie;
-import Models.Music;
-import Models.Scrape;
+import Models.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -158,9 +156,10 @@ public class CrawlerControllerTest {
     public void GetItem_BadRequest_WhenBaseUrlIsNull(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetItem(null, "Movie", "Terminator 2");
+        Response response = crawlerController.GetItem(null, "Movie", "Terminator 2", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -170,9 +169,10 @@ public class CrawlerControllerTest {
     public void GetItem_BadRequest_WhenBaseUrlIsEmpty(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetItem("", "Movie", "Terminator 2");
+        Response response = crawlerController.GetItem("", "Movie", "Terminator 2", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -182,9 +182,10 @@ public class CrawlerControllerTest {
     public void GetItem_BadRequest_WhenTypeIsNull(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetItem("localhost:8080", null, "Terminator 2");
+        Response response = crawlerController.GetItem("https://www.google.com/", null, "Terminator 2", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -194,9 +195,10 @@ public class CrawlerControllerTest {
     public void GetItem_BadRequest_WhenTypeIsEmpty(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetItem("localhost:8080", "", "Terminator 2");
+        Response response = crawlerController.GetItem("https://www.google.com/", "", "Terminator 2", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -206,9 +208,10 @@ public class CrawlerControllerTest {
     public void GetItem_BadRequest_WhenSearchValueIsNull(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetItem("localhost:8080", "Movie", null);
+        Response response = crawlerController.GetItem("https://www.google.com/", "Movie", null, mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -218,9 +221,10 @@ public class CrawlerControllerTest {
     public void GetItem_BadRequest_WhenSearchValueISEmpty(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetItem("localhost:8080", "Movie", "");
+        Response response = crawlerController.GetItem("https://www.google.com/", "Movie", "", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -233,8 +237,8 @@ public class CrawlerControllerTest {
         ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Mockito.when(mockedCrawler.FindItem("localhost:8080", "Movie", "Lord Of The Rings")).thenReturn(null);
-        Response response = crawlerController.GetItem("localhost:8080", "Movie", null);
+        Mockito.when(mockedCrawler.FindItem("https://www.google.com/", "Movie", "Lord Of The Rings")).thenReturn(null);
+        Response response = crawlerController.GetItem("https://www.google.com/", "Movie", "Lord Of The Rings", mockedCrawler);
 
         // Assert
         Assert.assertEquals(500, response.getStatus());
@@ -244,9 +248,12 @@ public class CrawlerControllerTest {
     public void GetItem_Successful(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
+        Item item = new Item();
 
         // Act
-        Response response = crawlerController.GetItem("localhost:8080", "Movie", "Lord Of The Rings");
+        Mockito.when(mockedCrawler.FindItem("https://www.google.com/", "Movie", "Lord Of The Rings")).thenReturn(item);
+        Response response = crawlerController.GetItem("https://www.google.com/", "Movie", "Lord Of The Rings", mockedCrawler);
 
         // Assert
         Assert.assertEquals(200, response.getStatus());
@@ -264,7 +271,7 @@ public class CrawlerControllerTest {
 
         // Act
         Mockito.when(mockedCrawler.GetLastAction()).thenReturn(null);
-        Response response = crawlerController.GetLastCrawlAction();
+        Response response = crawlerController.GetLastCrawlAction(mockedCrawler);
 
         // Assert
         Assert.assertEquals(500, response.getStatus());
@@ -274,9 +281,12 @@ public class CrawlerControllerTest {
     public void GetCrawlAction_Successful(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
+        Action action = new Action(12, (long) 76467876, 5, 2, 3);
 
         // Act
-        Response response = crawlerController.GetLastCrawlAction();
+        Mockito.when(mockedCrawler.GetLastAction()).thenReturn(action);
+        Response response = crawlerController.GetLastCrawlAction(mockedCrawler);
 
         // Assert
         Assert.assertEquals(200, response.getStatus());

@@ -54,11 +54,11 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsTrue_WhenAValidActionObjectIsPassed()
     {
         // Arrange
-        Action action = new Action(1,"100",1,1,1);
+        Action action = new Action(1,100,1,1,1);
         action.Id = 1;
         action.PagesExplored = 1;
         action.SearchDepth = 1;
-        action.TimeElapsed = "100";
+        action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
         Crawler crawler = new Crawler(mockedScrapper);
@@ -90,10 +90,10 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsFalse_WhenActionDoesNotHaveAnId()
     {
         // Arrange
-        Action action = new Action(1,"100", 1,1,1);
+        Action action = new Action(1,100, 1,1,1);
         action.PagesExplored = 1;
         action.SearchDepth = 1;
-        action.TimeElapsed = "100";
+        action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
         Crawler crawler = new Crawler(mockedScrapper);
@@ -109,11 +109,11 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsTrue_ValidatePrivateFieldHasBeenUpdated()
     {
         // Arrange
-        Action action = new Action(1,"100", 1,1,1);
+        Action action = new Action(1,100, 1,1,1);
         action.Id = 1;
         action.PagesExplored = 1;
         action.SearchDepth = 1;
-        action.TimeElapsed = "100";
+        action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
         Crawler crawler = new Crawler(mockedScrapper);
