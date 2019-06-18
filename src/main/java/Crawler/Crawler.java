@@ -14,7 +14,6 @@ public class Crawler implements ICrawler {
     private Action lastScrape;
 
     public Crawler(IScraper scrapper){
-
     }
 
     public Crawler(){}
