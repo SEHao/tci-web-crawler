@@ -20,7 +20,7 @@ public class Crawler implements ICrawler {
         return this.scraper;
     }
 
-    private Scrape CrawWebsite(String baseUrl, Scrape currentScrape, Action currentAction){
+    public Scrape CrawWebsite(String baseUrl, Scrape currentScrape, Action currentAction){
         return null;
     }
 
