@@ -1,4 +1,5 @@
 import Database.Models.Action;
+import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
 import Models.*;
 import org.junit.Assert;
@@ -7,21 +8,20 @@ import org.jsoup.nodes.Document;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.configuration.injection.MockInjection;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class CrawlerTest {
 
     @Test
-    public void Crawler_Successful_WhenValidIScrapperIsPassed()
+    public void Crawler_Successful_WhenValidIScrapperIsPassedAndDocumentRetrieverArePassed()
     {
         // Arrange
         IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
 
         // Act -- no exception should be thrown
-        Crawler crawler = new Crawler(mockedScraper);
+        Crawler crawler = new Crawler(mockedScraper,mockDocumentRetriever);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -29,12 +29,23 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper nullScraper = null;
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
 
         // Act
-        Crawler crawler = new Crawler(nullScraper);
+        Crawler crawler = new Crawler(nullScraper, mockDocumentRetriever);
 
         //
         Assert.fail();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void CrawlerThrowsIllegalArguemntException_WhenNullDocumentRetrieverIsPassed()
+    {
+        // Arrange
+        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = null;
+        // Act -- no exception should be thrown
+        Crawler crawler = new Crawler(mockedScraper,mockDocumentRetriever);
     }
 
     @Test
@@ -42,12 +53,27 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
 
         // Act -- no exception should be thrown
-        Crawler crawler = new Crawler(mockedScraper);
+        Crawler crawler = new Crawler(mockedScraper, mockDocumentRetriever);
 
         // Assert
         Assert.assertNotNull(crawler.getScraper());
+    }
+
+    @Test
+    public void Crawler_Successful_ValidateDocumentRetrieverIsPassed()
+    {
+        // Arrange
+        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+
+        // Act -- no exception should be thrown
+        Crawler crawler = new Crawler(mockedScraper, mockDocumentRetriever);
+
+        // Assert
+        Assert.assertNotNull(crawler.getDocumentRetriever());
     }
 
     @Test
@@ -61,7 +87,8 @@ public class CrawlerTest {
         action.TimeElapsed = "100";
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -77,7 +104,8 @@ public class CrawlerTest {
         Action action = null;
 
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -90,13 +118,14 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsFalse_WhenActionDoesNotHaveAnId()
     {
         // Arrange
-        Action action = new Action(1,"100", 1,1,1);
+        Action action = new Action(null,"100", 1,1,1);
         action.PagesExplored = 1;
         action.SearchDepth = 1;
         action.TimeElapsed = "100";
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -116,7 +145,8 @@ public class CrawlerTest {
         action.TimeElapsed = "100";
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -136,7 +166,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScrapper, mockDocumentRetriever);
         String baseUrl = "http://veryValidWebsite.nl";
         Document document = new Document(baseUrl);
         Scrape expectedScrape = new Scrape
@@ -148,7 +179,7 @@ public class CrawlerTest {
                 new ArrayList<>()
         );
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScrapper.GetScrape(document)).thenReturn(expectedScrape);
 
         // Act
@@ -163,7 +194,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
         String invalidUrl = "thisIsAnInvalidUrl";
 
         // Act
@@ -178,7 +210,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
         String invalidUrl = null;
 
         // Act
@@ -192,7 +225,8 @@ public class CrawlerTest {
     public void GetLastAction_ReturnsLastAction_Successful()
     {
         IScraper mockScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScrapper, mockDocumentRetriever);
         String baseUrl = "http://veryValidWebsite.nl";
         Document document = new Document(baseUrl);
         Scrape expectedScrape = new Scrape
@@ -204,7 +238,7 @@ public class CrawlerTest {
                 new ArrayList<>()
         );
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScrapper.GetScrape(document)).thenReturn(expectedScrape);
 
         // Act
@@ -221,7 +255,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = new Mockito().mock(IScraper.class);
-        Crawler crawler = new Crawler(mockScraper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
 
         // Act
         Action lastScrape = crawler.GetLastAction();
@@ -237,7 +272,8 @@ public class CrawlerTest {
         String baseUrl = "http://website.com";
         Document document = new Document(baseUrl);
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = "Book";
         String itemName = "The cool book";
         List<String> authors = new ArrayList<>();
@@ -249,8 +285,9 @@ public class CrawlerTest {
                 "111"
         );
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScraper.FindItem(document, itemType, itemName)).thenReturn(bookToReturn);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(crawler.FindItem(baseUrl, itemType, itemName)).thenCallRealMethod();
 
         // Act
         Item resultingItem = crawler.FindItem(baseUrl, itemType, itemName);
@@ -266,7 +303,8 @@ public class CrawlerTest {
         // Arrange
         String baseUrl = "InvalidUrl";
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = "book";
         String itemName = "bookBook";
 
@@ -274,7 +312,7 @@ public class CrawlerTest {
         crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.fail();
+//        Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -283,7 +321,8 @@ public class CrawlerTest {
         // Arrange
         String baseUrl = null;
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = "book";
         String itemName = "bookBook";
 
@@ -291,7 +330,7 @@ public class CrawlerTest {
         crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.fail();
+        //Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -300,7 +339,8 @@ public class CrawlerTest {
         // Arrange
         String baseUrl = "http://website.com";
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = "Car"; // parameter type is invalid
                                 // suported are book, movie, music
         String itemName = "bookBook";
@@ -309,7 +349,7 @@ public class CrawlerTest {
         crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.fail();
+        //Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -318,7 +358,8 @@ public class CrawlerTest {
         // Arrange
         String baseUrl = "http://website.com";
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = null;
         String itemName = "bookBook";
 
@@ -326,7 +367,7 @@ public class CrawlerTest {
         crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.fail();
+        //Assert.fail();
     }
 
     @Test
@@ -335,7 +376,8 @@ public class CrawlerTest {
         // Arrange
         String baseUrl = "http://website.com";
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = "book";
         String itemName = "";
 
@@ -343,7 +385,7 @@ public class CrawlerTest {
         crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.fail();
+        //Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -352,7 +394,8 @@ public class CrawlerTest {
         // Arrange
         String baseUrl = "http://website.com";
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String itemType = "book";
         String itemName = null;
 
@@ -360,7 +403,7 @@ public class CrawlerTest {
         crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.fail();
+        //Assert.fail();
     }
 
     @Test
@@ -368,7 +411,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String baseUrl = "http://website.com";
         Document document = new Document(baseUrl);
 //        Integer id, String timeElapsed, Integer pagesExplored, Integer uniquePagesFound, Integer searchDepth
@@ -403,7 +447,7 @@ public class CrawlerTest {
         Scrape newScrape = initialScrape;
         newScrape.Music.add(new Music("Song", 1995, "mp3", "Group" ));
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScraper.GetScrape(document)).thenReturn(newScrape);
 
         // Act
@@ -570,7 +614,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String baseUrl = "http://website.com";
         Document document = new Document(baseUrl);
         Action action = new Action(1, "100", 1,1,1);
@@ -609,7 +654,7 @@ public class CrawlerTest {
                 new ArrayList<>());
 
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScraper.GetScrape(document)).thenReturn(newScrape);
 
         // Act
@@ -629,7 +674,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String baseUrl = "http://website.com";
         String secondbaseUrl = "http://secondWebsite.com";
         Document document = new Document(baseUrl);
@@ -675,8 +721,8 @@ public class CrawlerTest {
         );
         Scrape thirdScrape = new Scrape("3",100L, new ArrayList<>(), new ArrayList<>(), books);
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
-        Mockito.when(crawler.GetDocument(secondbaseUrl)).thenReturn(secondDocument);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(secondbaseUrl)).thenReturn(secondDocument);
         Mockito.when(mockScraper.GetScrape(document)).thenReturn(secondScrape);
         Mockito.when(mockScraper.GetScrape(secondDocument)).thenReturn(thirdScrape);
 
@@ -692,5 +738,6 @@ public class CrawlerTest {
         Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 2);
         Assert.assertTrue(crawler.GetLastAction().Id == 1);
     }
+
 }
 

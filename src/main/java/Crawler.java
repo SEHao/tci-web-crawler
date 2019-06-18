@@ -1,14 +1,19 @@
 import Database.Models.Action;
 import Interfaces.ICrawler;
+import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
 import Models.Item;
 import Models.Scrape;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.JarEntry;
 
 
@@ -16,10 +21,25 @@ public class Crawler implements ICrawler {
 
     private IScraper scraper;
 
+    private IDocumentRetriever documentRetriever;
+
     private Action lastScrape;
 
-    public Crawler(IScraper scrapper){
+    public Crawler(IScraper scrapper, IDocumentRetriever documentRetriever){
 
+        if(scrapper == null){
+            throw new IllegalArgumentException("Cannot create a crawler because scraper is null");
+        }
+        if(documentRetriever == null){
+            throw  new IllegalArgumentException("Cannot create a crawler because document retriever is null");
+        }
+
+        this.scraper = scrapper;
+        this.documentRetriever = documentRetriever;
+    }
+
+    public IDocumentRetriever getDocumentRetriever(){
+        return  this.documentRetriever;
     }
 
     public IScraper getScraper(){
@@ -37,7 +57,17 @@ public class Crawler implements ICrawler {
      * Returns false if the item cannot be stored.
      */
     public Boolean StoreCrawRecord(Action action){
-        return null;
+
+        if(action == null){
+            return false;
+        }
+
+        if(action.Id == null){
+            return false;
+        }
+
+        this.lastScrape = action;
+        return true;
     }
 
     /**
@@ -51,33 +81,6 @@ public class Crawler implements ICrawler {
         return null;
     }
 
-    public Document GetDocument(String url)
-    {
-        try{
-            if (url == null){
-                throw new
-                        IllegalArgumentException("Could not create document because passed URL was null");
-            }
-
-            if (url.isEmpty()){
-                throw new
-                        IllegalArgumentException("Could not create document because passed URL was empty");
-            }
-
-            URL formatedUrl = new URL(url);
-
-            Document document = Jsoup.connect(formatedUrl.toString()).timeout(6000).get();
-            return document;
-        }
-        catch (MalformedURLException e) {
-            throw new
-                    IllegalArgumentException("Could not create document submited imput was not a valid URL");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     /**
      * Finds an item (Movie, Music, Book) from
      * @param baseUrl The base Url of the website that is to be crawed.
@@ -87,7 +90,46 @@ public class Crawler implements ICrawler {
      */
     @Override
     public Item FindItem(String baseUrl, String itemType, String value) {
-        return null;
+
+        if(baseUrl == null){
+            throw new IllegalArgumentException();
+        }
+        if(baseUrl.isEmpty()){
+            throw new IllegalArgumentException("Base url cannot be empty");
+        }
+        if(itemType == null){
+            throw new IllegalArgumentException("Item type cannot be null");
+        }
+        if(itemType.isEmpty()){
+            throw  new IllegalArgumentException("Item type cannot be empty");
+        }
+        if(!itemType.trim().toLowerCase().equals("book") &&
+                !itemType.trim().toLowerCase().equals("movie") &&
+                !itemType.trim().toLowerCase().equals("music")){
+            throw new IllegalArgumentException("Unrecognized item type");
+        }
+        if(value == null){
+            throw new IllegalArgumentException("Value cannot be null");
+        }
+        if(value.isEmpty()){
+            throw new IllegalArgumentException("Value cannot be empty");
+        }
+
+        Item item = null;
+        Document document = documentRetriever.GetDocument(baseUrl);
+        if(document != null)
+        item = scraper.FindItem(document, itemType, value);
+
+        Elements links = document.select("a[href]");
+
+        if (!links.isEmpty()){
+            for (Element link : links){
+                document = documentRetriever.GetDocument(link.attr("href"));
+                if(document != null)
+                item = scraper.FindItem(document, itemType, value);
+            }
+        }
+        return item;
     }
 
     /**
@@ -97,6 +139,6 @@ public class Crawler implements ICrawler {
      */
     @Override
     public Action GetLastAction() {
-        return null;
+        return this.lastScrape;
     }
 }
