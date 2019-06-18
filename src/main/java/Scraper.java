@@ -52,6 +52,9 @@ public class Scraper implements IScraper {
             }
             case "Books": {
                 Book book = new Book();
+
+                book.setName(mediaDetails.selectFirst("h1").text());
+
                 for (Element row : rows) {
                     String key = row.selectFirst("th").text();
                     String value = row.selectFirst("td").text();
@@ -89,6 +92,12 @@ public class Scraper implements IScraper {
         return scrape;
     }
 
+    /**
+     * Parse Element containing movie information into movie object
+     *
+     * @param mediaDetails Element which contains the details of movie
+     * @return Returns Movie object which was parsed from element
+     */
     private Movie parseMovie(Element mediaDetails) {
         Movie movie = new Movie();
 
