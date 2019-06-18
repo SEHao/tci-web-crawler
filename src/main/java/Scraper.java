@@ -33,9 +33,58 @@ public class Scraper implements IScraper {
         scrape.setBooks(books);
 
         Element mediaDetails = document.selectFirst("div.media-details");
+        Elements rows = mediaDetails.select("table tbody tr");
 
-        Movie parsedMovie = this.parseMovie(mediaDetails);
-        movies.add(parsedMovie);
+        String category = "";
+        for (Element row : rows) {
+            String key = row.selectFirst("th").text();
+            if (key.equals("Category")) {
+                category = row.selectFirst("td").text();
+                break;
+            }
+        }
+
+        switch (category) {
+            case "Movies": {
+                Movie parsedMovie = this.parseMovie(mediaDetails);
+                movies.add(parsedMovie);
+                break;
+            }
+            case "Books": {
+                Book book = new Book();
+                for (Element row : rows) {
+                    String key = row.selectFirst("th").text();
+                    String value = row.selectFirst("td").text();
+                    switch (key) {
+                        case "Genre": {
+                            book.setGenre(value);
+                            break;
+                        }
+                        case "Format": {
+                            book.setFormat(value);
+                            break;
+                        }
+                        case "Year": {
+                            book.setYear(Integer.parseInt(value));
+                            break;
+                        }
+                        case "Authors": {
+                            book.setAuthor(Arrays.asList(value.split(", ")));
+                            break;
+                        }
+                        case "Publisher": {
+                            book.setPublisher(value);
+                            break;
+                        }
+                        case "ISBN": {
+                            book.setIsbn(value);
+                        }
+                    }
+                }
+                books.add(book);
+                break;
+            }
+        }
 
         return scrape;
     }
