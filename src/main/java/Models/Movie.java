@@ -3,59 +3,58 @@ package Models;
 import java.util.List;
 
 public class Movie extends Item {
+    private List<String> writers;
+    private String director;
+    private String genre;
+    private List<String> stars;
 
-    public List<String> Writters;
-
-    public String Director;
-
-    public String Genre;
-
-    public List<String> Stars;
-
-    public List<String> getWritters() {
-        return Writters;
+    public List<String> getWriters() {
+        return writers;
     }
 
     public String getDirector() {
-        return Director;
+        return director;
     }
 
     public String getGenre() {
-        return Genre;
+        return genre;
     }
 
     public List<String> getStars() {
-        return Stars;
+        return stars;
     }
 
-    public void setWritters(List<String> writters) {
-        Writters = writters;
+    public void setWriters(List<String> writers) {
+        this.writers = writers;
     }
 
     public void setDirector(String director) {
-        Director = director;
+        this.director = director;
     }
 
     public void setGenre(String genre) {
-        Genre = genre;
+        this.genre = genre;
     }
 
     public void setStars(List<String> stars) {
-        Stars = stars;
+        this.stars = stars;
     }
 
-    public Movie(List<String> writters, String director, String genre, List<String> stars) {
-        Writters = writters;
-        Director = director;
-        Genre = genre;
-        Stars = stars;
+    public Movie(List<String> writers, String director, String genre, List<String> stars) {
+        this.writers = writers;
+        this.director = director;
+        this.genre = genre;
+        this.stars = stars;
     }
 
-    public Movie(String name, Integer year, String format, List<String> writters, String director, String genre, List<String> stars) {
+    public Movie(String name, Integer year, String format, List<String> writers, String director, String genre, List<String> stars) {
         super(name, year, format);
-        Writters = writters;
-        Director = director;
-        Genre = genre;
-        Stars = stars;
+        this.writers = writers;
+        this.director = director;
+        this.genre = genre;
+        this.stars = stars;
+    }
+
+    public Movie() {
     }
 }
