@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Book extends Item{
 
@@ -57,5 +58,21 @@ public class Book extends Item{
     }
 
     public Book() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(genre, book.genre) &&
+                Objects.equals(author, book.author) &&
+                Objects.equals(publisher, book.publisher) &&
+                Objects.equals(isbn, book.isbn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(genre, author, publisher, isbn);
     }
 }
