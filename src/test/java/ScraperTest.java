@@ -136,6 +136,25 @@ public class ScraperTest {
     }
 
     @Test
+    public void GetScrape_ReturnObjectOfEmptyList_WhenPageDoesNotContainAnyItem() {
+        // Arrange
+        Scraper scraper = new Scraper();
+        Document document = this.loadDocumentFromFile("res/TestFiles/catalog.html");
+
+        // Act
+        Scrape result = scraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(0, result.getBooks().size());
+        assertEquals(0, result.getMusic().size());
+        assertEquals(0, result.getMovies().size());
+    }
+
+    @Test
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
     }
 
