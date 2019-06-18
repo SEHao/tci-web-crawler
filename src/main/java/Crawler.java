@@ -3,6 +3,8 @@ import Interfaces.ICrawler;
 import Interfaces.IScraper;
 import Models.Item;
 import Models.Scrape;
+import org.jsoup.nodes.Document;
+
 
 public class Crawler implements ICrawler {
 
@@ -12,6 +14,10 @@ public class Crawler implements ICrawler {
 
     public Crawler(IScraper scrapper){
 
+    }
+
+    public IScraper getScraper(){
+        return this.scraper;
     }
 
     private Scrape CrawWebsite(String baseUrl, Scrape currentScrape, Action currentAction){
@@ -24,7 +30,7 @@ public class Crawler implements ICrawler {
      * @return Returns true if the item has been successfully stored.
      * Returns false if the item cannot be stored.
      */
-    private Boolean StoreCrawRecord(Action action){
+    public Boolean StoreCrawRecord(Action action){
         return null;
     }
 
@@ -36,6 +42,11 @@ public class Crawler implements ICrawler {
      */
     @Override
     public Scrape CrawWholeWebsite(String baseUrl) {
+        return null;
+    }
+
+    public Document GetDocument(String url)
+    {
         return null;
     }
 
