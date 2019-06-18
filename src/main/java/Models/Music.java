@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Music extends Item {
 
     private String artist;
+    private String genre;
 
     public String getArtist() {
         return artist;
@@ -14,13 +15,23 @@ public class Music extends Item {
         this.artist = artist;
     }
 
-    public Music(String artist) {
-        this.artist = artist;
+    public String getGenre() {
+        return genre;
     }
 
-    public Music(String name, Integer year, String format, String artist) {
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public Music(String artist, String genre) {
+        this.artist = artist;
+        this.genre = genre;
+    }
+
+    public Music(String name, Integer year, String format, String artist, String genre) {
         super(name, year, format);
         this.artist = artist;
+        this.genre = genre;
     }
 
     public Music() {
@@ -32,11 +43,12 @@ public class Music extends Item {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Music music = (Music) o;
-        return Objects.equals(artist, music.artist);
+        return Objects.equals(artist, music.artist) &&
+                Objects.equals(genre, music.genre);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), artist);
+        return Objects.hash(super.hashCode(), artist, genre);
     }
 }

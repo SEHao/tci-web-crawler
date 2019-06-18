@@ -60,10 +60,12 @@ public class Book extends Item{
     public Book() {
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Book book = (Book) o;
         return Objects.equals(genre, book.genre) &&
                 Objects.equals(author, book.author) &&
@@ -73,6 +75,6 @@ public class Book extends Item{
 
     @Override
     public int hashCode() {
-        return Objects.hash(genre, author, publisher, isbn);
+        return Objects.hash(super.hashCode(), genre, author, publisher, isbn);
     }
 }
