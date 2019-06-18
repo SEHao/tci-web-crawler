@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
 
 public class ScraperTest {
     private Movie lordOfTheRingsMovie;
+    private Book refactoringBook;
 
     @Before
     public void setUp() {
@@ -41,6 +42,23 @@ public class ScraperTest {
                 "Peter Jackson",
                 "Drama",
                 stars
+        );
+
+        List<String> authors = new ArrayList<>();
+        authors.add("Martin Fowler");
+        authors.add("Kent Beck");
+        authors.add("John Brant");
+        authors.add("William Opdyke");
+        authors.add("Don Roberts");
+
+        refactoringBook = new Book(
+                "Refactoring: Improving the Design of Existing Code",
+                1999,
+                "Hardcover",
+                "Tech",
+                authors,
+                "Addison-Wesley Professional",
+                "978-0201485677"
         );
     }
 
@@ -77,22 +95,7 @@ public class ScraperTest {
         // Arrange
         Scraper scraper = new Scraper();
 
-        List<String> authors = new ArrayList<>();
-        authors.add("Martin Fowler");
-        authors.add("Kent Beck");
-        authors.add("John Brant");
-        authors.add("William Opdyke");
-        authors.add("Don Roberts");
-
-        Book expectedBook = new Book(
-                "Refactoring: Improving the Design of Existing Code",
-                1999,
-                "Hardcover",
-                "Tech",
-                authors,
-                "Addison-Wesley Professional",
-                "978-0201485677"
-        );
+        Book expectedBook = refactoringBook;
 
         File htmlTemplateFile = new File("res/TestFiles/refactoring.html");
 

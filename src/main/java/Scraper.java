@@ -51,40 +51,8 @@ public class Scraper implements IScraper {
                 break;
             }
             case "Books": {
-                Book book = new Book();
-
-                book.setName(mediaDetails.selectFirst("h1").text());
-
-                for (Element row : rows) {
-                    String key = row.selectFirst("th").text();
-                    String value = row.selectFirst("td").text();
-                    switch (key) {
-                        case "Genre": {
-                            book.setGenre(value);
-                            break;
-                        }
-                        case "Format": {
-                            book.setFormat(value);
-                            break;
-                        }
-                        case "Year": {
-                            book.setYear(Integer.parseInt(value));
-                            break;
-                        }
-                        case "Authors": {
-                            book.setAuthor(Arrays.asList(value.split(", ")));
-                            break;
-                        }
-                        case "Publisher": {
-                            book.setPublisher(value);
-                            break;
-                        }
-                        case "ISBN": {
-                            book.setIsbn(value);
-                        }
-                    }
-                }
-                books.add(book);
+                Book parsedBook = this.parseBook(mediaDetails);
+                books.add(parsedBook);
                 break;
             }
         }
@@ -93,7 +61,7 @@ public class Scraper implements IScraper {
     }
 
     /**
-     * Parse Element containing movie information into movie object
+     * Parse Element containing movie information into movie object.
      *
      * @param mediaDetails Element which contains the details of movie
      * @return Returns Movie object which was parsed from element
@@ -137,6 +105,53 @@ public class Scraper implements IScraper {
         }
 
         return movie;
+    }
+
+
+    /**
+     * Parse Element containing book information into book object.
+     *
+     * @param mediaDetails Element which contains the details of book
+     * @return Returns Book object which was parsed from element
+     */
+    private Book parseBook(Element mediaDetails) {
+        Book book = new Book();
+
+        book.setName(mediaDetails.selectFirst("h1").text());
+
+        Elements rows = mediaDetails.select("table tbody tr");
+
+        for (Element row : rows) {
+            String key = row.selectFirst("th").text();
+            String value = row.selectFirst("td").text();
+            switch (key) {
+                case "Genre": {
+                    book.setGenre(value);
+                    break;
+                }
+                case "Format": {
+                    book.setFormat(value);
+                    break;
+                }
+                case "Year": {
+                    book.setYear(Integer.parseInt(value));
+                    break;
+                }
+                case "Authors": {
+                    book.setAuthor(Arrays.asList(value.split(", ")));
+                    break;
+                }
+                case "Publisher": {
+                    book.setPublisher(value);
+                    break;
+                }
+                case "ISBN": {
+                    book.setIsbn(value);
+                }
+            }
+        }
+
+        return book;
     }
 
     /**
