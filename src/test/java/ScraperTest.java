@@ -3,6 +3,7 @@ import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
 import org.junit.Before;
 import org.junit.Test;
@@ -160,6 +161,20 @@ public class ScraperTest {
         Document document = mock(Document.class);
         when(document.selectFirst("div.media-details"))
                 .thenThrow(Selector.SelectorParseException.class);
+
+        // Act
+        Scrape result = defaultScraper.GetScrape(document);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void GetScrape_ThrowIllegalArgumentException_WhenElementThrowSelectorUnexpectedError() {
+        // Arrange
+        Document document = mock(Document.class);
+        Element element = mock(Element.class);
+        when(element.select("table tbody tr"))
+                .thenThrow(Selector.SelectorParseException.class);
+        when(document.selectFirst("div.media-details"))
+                .thenReturn(element);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
