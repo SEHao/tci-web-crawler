@@ -160,10 +160,6 @@ public class ScraperTest {
     }
 
     @Test
-    public void GetScrape_ReturnNull_WhenDocumentContainsNoData() {
-    }
-
-    @Test
     public void FindItem_ReturnItemObject() {
     }
 
