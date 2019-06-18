@@ -33,6 +33,11 @@ public class Scraper implements IScraper {
         scrape.setBooks(books);
 
         Element mediaDetails = document.selectFirst("div.media-details");
+
+        if (mediaDetails == null) {
+            return scrape;
+        }
+
         Elements rows = mediaDetails.select("table tbody tr");
 
         String category = "";
