@@ -18,6 +18,10 @@ public class Scraper implements IScraper {
      */
     @Override
     public Scrape GetScrape(Document document) {
+        if (document == null) {
+            throw new IllegalArgumentException();
+        }
+
         Date currentDate = new Date();
         Timestamp timestamp = new Timestamp(currentDate.getTime());
         Long timeStampLong = timestamp.getTime();
