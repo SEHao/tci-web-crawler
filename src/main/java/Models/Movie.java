@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Movie extends Item {
     private List<String> writers;
@@ -56,5 +57,22 @@ public class Movie extends Item {
     }
 
     public Movie() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Movie movie = (Movie) o;
+        return Objects.equals(writers, movie.writers) &&
+                Objects.equals(director, movie.director) &&
+                Objects.equals(genre, movie.genre) &&
+                Objects.equals(stars, movie.stars);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), writers, director, genre, stars);
     }
 }

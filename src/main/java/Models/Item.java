@@ -1,5 +1,7 @@
 package Models;
 
+import java.util.Objects;
+
 public class Item {
     private String name;
     private Integer year;
@@ -36,5 +38,20 @@ public class Item {
     }
 
     public Item() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return Objects.equals(name, item.name) &&
+                Objects.equals(year, item.year) &&
+                Objects.equals(format, item.format);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, year, format);
     }
 }

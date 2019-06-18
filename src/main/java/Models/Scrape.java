@@ -1,6 +1,7 @@
 package Models;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Scrape {
     private String id;
@@ -58,5 +59,22 @@ public class Scrape {
     }
 
     public Scrape() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Scrape scrape = (Scrape) o;
+        return Objects.equals(id, scrape.id) &&
+                Objects.equals(timeStamp, scrape.timeStamp) &&
+                Objects.equals(movies, scrape.movies) &&
+                Objects.equals(music, scrape.music) &&
+                Objects.equals(books, scrape.books);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, timeStamp, movies, music, books);
     }
 }
