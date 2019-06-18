@@ -216,6 +216,20 @@ public class Scraper implements IScraper {
      */
     @Override
     public Item FindItem(Document document, String type, String value) {
-        return null;
+        Item item = null;
+        Element mediaDetails = document.selectFirst("div.media-details");
+        Elements rows = mediaDetails.select("table tbody tr");
+
+        for(Element row : rows) {
+            String key = row.selectFirst("th").text();
+            String keyValue = row.selectFirst("td").text();
+
+            if (key.equals(type) && keyValue.equals(value)) {
+                item = this.parseMovie(mediaDetails);
+                break;
+            }
+        }
+
+        return item;
     }
 }
