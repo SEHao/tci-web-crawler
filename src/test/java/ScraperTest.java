@@ -73,7 +73,7 @@ public class ScraperTest {
     }
 
     @Test
-    public void GetScrape_ReturnScrapeObjectWithMovie() {
+    public void GetScrape_ReturnScrapeObjectWithMovie_WhenPageContainsMovieDetails() {
         // Arrange
         Scraper scraper = new Scraper();
         Movie expectedMovie = lordOfTheRingsMovie;
@@ -94,7 +94,7 @@ public class ScraperTest {
     }
 
     @Test
-    public void GetScrape_ReturnScrapeObjectWithBook() {
+    public void GetScrape_ReturnScrapeObjectWithBook_WhenPageContainsBookDetails() {
         // Arrange
         Scraper scraper = new Scraper();
         Book expectedBook = refactoringBook;
@@ -115,7 +115,7 @@ public class ScraperTest {
     }
 
     @Test
-    public void GetScrape_ReturnScrapeObjectWithMusic() {
+    public void GetScrape_ReturnScrapeObjectWithMusic_WhenPageContainsMusicDetails() {
         // Arrange
         Scraper scraper = new Scraper();
         Music expectedMusic = elvisForeverMusic;
