@@ -2,6 +2,8 @@ import Models.*;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Selector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ScraperTest {
     private Movie lordOfTheRingsMovie;
@@ -148,6 +152,17 @@ public class ScraperTest {
         assertEquals(0, result.getBooks().size());
         assertEquals(0, result.getMusic().size());
         assertEquals(0, result.getMovies().size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void GetScrape_ThrowIllegalArgumentException_WhenDocumentThrowSelectorUnexpectedError() {
+        // Arrange
+        Document document = mock(Document.class);
+        when(document.selectFirst("div.media-details"))
+                .thenThrow(Selector.SelectorParseException.class);
+
+        // Act
+        Scrape result = defaultScraper.GetScrape(document);
     }
 
     @Test(expected = IllegalArgumentException.class)
