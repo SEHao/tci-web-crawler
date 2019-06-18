@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-class CrawlerTest {
+public class CrawlerTest {
 
     @Test
     public void Crawler_Successful_WhenValidIScrapperIsPassed()
@@ -22,8 +22,6 @@ class CrawlerTest {
 
         // Act -- no exception should be thrown
         Crawler crawler = new Crawler(mockedScraper);
-
-        // Assert - not needed
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -414,7 +412,7 @@ class CrawlerTest {
         // Assert
         Assert.assertFalse(resultingScrape.Movies.isEmpty());
         Assert.assertFalse(resultingScrape.Music.isEmpty());
-        Assert.assertEquals("John Smith" resultingScrape.Movies.get(0).Director);
+        Assert.assertEquals("John Smith", resultingScrape.Movies.get(0).Director);
         Assert.assertEquals("Group" ,resultingScrape.Music.get(0).Artist);
         Assert.assertTrue(crawler.GetLastAction().PagesExplored == 2);
         Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 2);
@@ -620,7 +618,7 @@ class CrawlerTest {
         // Assert
         Assert.assertFalse(resultingScrape.Movies.isEmpty());
         Assert.assertTrue(resultingScrape.Music.isEmpty()); // no music was added this should be empty
-        Assert.assertEquals("John Smith" resultingScrape.Movies.get(0).Director);
+        Assert.assertEquals("John Smith", resultingScrape.Movies.get(0).Director);
         Assert.assertTrue(crawler.GetLastAction().PagesExplored == 2);
         Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 1);
         Assert.assertTrue(crawler.GetLastAction().Id == 1);
@@ -666,7 +664,15 @@ class CrawlerTest {
         Scrape secondScrape = initialScrape;
         secondScrape.Music.add(new Music("Song", 1995, "mp3", "Group" ));
 //        String name, Integer year, String format, String genre, List<String> author, String publisher, String ISBN
-        books.add(new Book("The new Book", 1996, "electronic", "History", new ArrayList<>(), "books.nl", "1234"))
+        books.add(new Book(
+                "The new Book",
+                1996,
+                "electronic",
+                "History",
+                new ArrayList<>(),
+                "books.nl",
+                "1234")
+        );
         Scrape thirdScrape = new Scrape("3",100L, new ArrayList<>(), new ArrayList<>(), books);
 
         Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
@@ -680,7 +686,7 @@ class CrawlerTest {
         // Assert
         Assert.assertFalse(resultingScrape.Movies.isEmpty());
         Assert.assertFalse(resultingScrape.Music.isEmpty());
-        Assert.assertEquals("John Smith" resultingScrape.Movies.get(0).Director);
+        Assert.assertEquals("John Smith", resultingScrape.Movies.get(0).Director);
         Assert.assertEquals("Group" ,resultingScrape.Music.get(0).Artist);
         Assert.assertTrue(crawler.GetLastAction().PagesExplored == 2);
         Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 2);

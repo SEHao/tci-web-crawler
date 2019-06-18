@@ -1,18 +1,18 @@
 package Controllers;
 
-import java.net.http.HttpResponse;
+import org.jsoup.helper.HttpConnection;
 
 public class CrawlerController {
 
-    public HttpResponse GetScrapesOfWholeWebsite(String baseUrl){
+    public HttpConnection.Response GetScrapesOfWholeWebsite(String baseUrl){
         return null;
     }
 
-    public HttpResponse GetItem(String baseUrl, String type, String searchValue){
+    public HttpConnection.Response GetItem(String baseUrl, String type, String searchValue){
         return null;
     }
 
-    public HttpResponse GetLastCrawlAction() {
+    public HttpConnection.Response GetLastCrawlAction() {
         return null;
     }
 }
