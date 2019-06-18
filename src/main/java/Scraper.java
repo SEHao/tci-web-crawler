@@ -9,8 +9,8 @@ import java.sql.Timestamp;
 import java.util.*;
 
 public class Scraper implements IScraper {
-    private final String mediaDetailsQuery = "div.media-details";
-    private final String mediaDetailRowsQuery = "table tbody tr";
+    private static final String MEDIA_DETAILS_QUERY = "div.media-details";
+    private static final String MEDIA_DETAIL_ROWS_QUERY = "table tbody tr";
 
     /**
      * Scrapes a Document produced by Jsoup and returns a Scrape object.
@@ -40,13 +40,13 @@ public class Scraper implements IScraper {
         scrape.setBooks(books);
 
         try {
-            Element mediaDetails = document.selectFirst(mediaDetailsQuery);
+            Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
 
             if (mediaDetails == null) {
                 return scrape;
             }
 
-            Elements rows = mediaDetails.select(mediaDetailRowsQuery);
+            Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
             String category = "";
             for (Element row : rows) {
@@ -92,7 +92,7 @@ public class Scraper implements IScraper {
 
         movie.setName(mediaDetails.selectFirst("h1").text());
 
-        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
+        Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
         for (Element row : rows) {
             String key = row.selectFirst("th").text();
@@ -139,7 +139,7 @@ public class Scraper implements IScraper {
 
         book.setName(mediaDetails.selectFirst("h1").text());
 
-        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
+        Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
         for (Element row : rows) {
             String key = row.selectFirst("th").text();
@@ -183,7 +183,7 @@ public class Scraper implements IScraper {
     private Music parseMusic(Element mediaDetails) {
         Music music = new Music();
 
-        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
+        Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
         music.setName(mediaDetails.selectFirst("h1").text());
 
@@ -224,8 +224,8 @@ public class Scraper implements IScraper {
     @Override
     public Item FindItem(Document document, String type, String value) {
         Item item = null;
-        Element mediaDetails = document.selectFirst(mediaDetailsQuery);
-        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
+        Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
+        Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
         for (Element row : rows) {
             String key = row.selectFirst("th").text();
