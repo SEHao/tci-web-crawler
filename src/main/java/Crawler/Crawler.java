@@ -1,10 +1,11 @@
+package Crawler;
+
 import Database.Models.Action;
 import Interfaces.ICrawler;
 import Interfaces.IScraper;
 import Models.Item;
 import Models.Scrape;
 import org.jsoup.nodes.Document;
-
 
 public class Crawler implements ICrawler {
 
@@ -15,6 +16,8 @@ public class Crawler implements ICrawler {
     public Crawler(IScraper scrapper){
 
     }
+
+    public Crawler(){}
 
     public IScraper getScraper(){
         return this.scraper;

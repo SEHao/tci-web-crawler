@@ -1,3 +1,4 @@
+import Crawler.Crawler;
 import Database.Models.Action;
 import Interfaces.IScraper;
 import Models.Scrape;
@@ -7,7 +8,6 @@ import org.jsoup.nodes.Document;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class CrawlerTest {

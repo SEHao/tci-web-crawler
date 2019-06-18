@@ -23,9 +23,10 @@ public class CrawlerControllerTest {
 
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetScrapesOfWholeWebsite(null);
+        Response response = crawlerController.GetScrapesOfWholeWebsite(null, mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -36,9 +37,10 @@ public class CrawlerControllerTest {
 
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetScrapesOfWholeWebsite("");
+        Response response = crawlerController.GetScrapesOfWholeWebsite("", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -49,25 +51,13 @@ public class CrawlerControllerTest {
 
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Response response = crawlerController.GetScrapesOfWholeWebsite("abcd");
+        Response response = crawlerController.GetScrapesOfWholeWebsite("abcd", mockedCrawler);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
-    }
-
-    @Test
-    public void GetScrapeWholeWebsite_NotFound_WhenBaseUrlISNotValidUri(){
-
-        // Arrange
-        CrawlerController crawlerController = new CrawlerController();
-
-        // Act
-        Response response = crawlerController.GetScrapesOfWholeWebsite("www.notAValidSite.com");
-
-        // Assert
-        Assert.assertEquals(401, response.getStatus());
     }
 
     @Test
@@ -77,8 +67,8 @@ public class CrawlerControllerTest {
         ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
         // Act
-        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(null);
-        Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
+        Mockito.when(mockedCrawler.CrawWholeWebsite("https://www.google.com/")).thenReturn(null);
+        Response response = crawlerController.GetScrapesOfWholeWebsite("https://www.google.com/", mockedCrawler);
 
         // Assert
         Assert.assertEquals(500, response.getStatus());
@@ -96,11 +86,11 @@ public class CrawlerControllerTest {
         Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(scrape);
-        Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
+        Mockito.when(mockedCrawler.CrawWholeWebsite("https://www.google.com/")).thenReturn(scrape);
+        Response response = crawlerController.GetScrapesOfWholeWebsite("https://www.google.com/", mockedCrawler);
 
         // Assert
-        Assert.assertEquals(500, response);
+        Assert.assertEquals(500, response.getStatus());
     }
 
     @Test
@@ -115,11 +105,11 @@ public class CrawlerControllerTest {
         Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(scrape);
-        Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
+        Mockito.when(mockedCrawler.CrawWholeWebsite("https://www.google.com/")).thenReturn(scrape);
+        Response response = crawlerController.GetScrapesOfWholeWebsite("https://www.google.com/", mockedCrawler);
 
         // Assert
-        Assert.assertEquals(500, response);
+        Assert.assertEquals(500, response.getStatus());
     }
 
     @Test
@@ -134,20 +124,27 @@ public class CrawlerControllerTest {
         Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(scrape);
-        Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
+        Mockito.when(mockedCrawler.CrawWholeWebsite("https://www.google.com/")).thenReturn(scrape);
+        Response response = crawlerController.GetScrapesOfWholeWebsite("https://www.google.com/", mockedCrawler);
 
         // Assert
-        Assert.assertEquals(500, response);
+        Assert.assertEquals(500, response.getStatus());
     }
 
     @Test
     public void GetScrapeWholeWebsite_Successful(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
+        List<Movie> movies = new ArrayList<Movie>();
+        List<Music> musics = new ArrayList<Music>();
+        List<Book> books = new ArrayList<Book>();
+
+        Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
+        Mockito.when(mockedCrawler.CrawWholeWebsite("https://www.google.com/")).thenReturn(scrape);
+        Response response = crawlerController.GetScrapesOfWholeWebsite("https://www.google.com/", mockedCrawler);
 
         // Assert
         Assert.assertEquals(200, response.getStatus());

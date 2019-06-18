@@ -1,5 +1,6 @@
 import Models.Movie;
 import Models.Scrape;
+import Scrapper.Scraper;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
