@@ -1,27 +1,30 @@
 import Crawler.Crawler;
 import Database.Models.Action;
+import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
-import Models.Scrape;
+import Models.*;
+import Scrapper.Scraper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.jsoup.nodes.Document;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-
+import org.mockito.internal.configuration.injection.MockInjection;
 import java.util.ArrayList;
 
+import java.util.List;
 
 public class CrawlerTest {
 
     @Test
-    public void Crawler_Successful_WhenValidIScrapperIsPassed()
+    public void Crawler_Successful_WhenValidIScrapperIsPassedAndDocumentRetrieverArePassed()
     {
         // Arrange
         IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
 
         // Act -- no exception should be thrown
-        Crawler crawler = new Crawler(mockedScraper);
-
-        // Assert - not needed
+        Crawler crawler = new Crawler(mockedScraper,mockDocumentRetriever);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -29,12 +32,23 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper nullScraper = null;
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
 
         // Act
-        Crawler crawler = new Crawler(nullScraper);
+        Crawler crawler = new Crawler(nullScraper, mockDocumentRetriever);
 
         //
         Assert.fail();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void CrawlerThrowsIllegalArguemntException_WhenNullDocumentRetrieverIsPassed()
+    {
+        // Arrange
+        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = null;
+        // Act -- no exception should be thrown
+        Crawler crawler = new Crawler(mockedScraper,mockDocumentRetriever);
     }
 
     @Test
@@ -42,12 +56,27 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
 
         // Act -- no exception should be thrown
-        Crawler crawler = new Crawler(mockedScraper);
+        Crawler crawler = new Crawler(mockedScraper, mockDocumentRetriever);
 
         // Assert
         Assert.assertNotNull(crawler.getScraper());
+    }
+
+    @Test
+    public void Crawler_Successful_ValidateDocumentRetrieverIsPassed()
+    {
+        // Arrange
+        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+
+        // Act -- no exception should be thrown
+        Crawler crawler = new Crawler(mockedScraper, mockDocumentRetriever);
+
+        // Assert
+        Assert.assertNotNull(crawler.getDocumentRetriever());
     }
 
     @Test
@@ -61,7 +90,8 @@ public class CrawlerTest {
         action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -77,7 +107,8 @@ public class CrawlerTest {
         Action action = null;
 
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -90,13 +121,14 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsFalse_WhenActionDoesNotHaveAnId()
     {
         // Arrange
-        Action action = new Action(1,100, 1,1,1);
+        Action action = new Action(null,100L, 1,1,1);
         action.PagesExplored = 1;
         action.SearchDepth = 1;
         action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -116,7 +148,8 @@ public class CrawlerTest {
         action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
 
         // Act
         Boolean result = crawler.StoreCrawRecord(action);
@@ -136,7 +169,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScrapper, mockDocumentRetriever);
         String baseUrl = "http://veryValidWebsite.nl";
         Document document = new Document(baseUrl);
         Scrape expectedScrape = new Scrape
@@ -148,7 +182,7 @@ public class CrawlerTest {
                 new ArrayList<>()
         );
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScrapper.GetScrape(document)).thenReturn(expectedScrape);
 
         // Act
@@ -163,36 +197,34 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
         String invalidUrl = "thisIsAnInvalidUrl";
 
         // Act
         crawler.CrawWholeWebsite(null);
-
-        // Assert
-        Assert.fail();
     }
 
-    @Test
+    @Test (expected = IllegalArgumentException.class)
     public void CrawlWHoleWebsite_ThrowsIllegalArgumentException_WhenNullUrlIsPassed()
     {
         // Arrange
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = new Crawler(mockedScrapper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockedScrapper, mockDocumentRetriever);
         String invalidUrl = null;
 
         // Act
         crawler.CrawWholeWebsite(null);
 
-        // Assert
-        Assert.fail();
     }
 
     @Test
     public void GetLastAction_ReturnsLastAction_Successful()
     {
         IScraper mockScrapper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScrapper, mockDocumentRetriever);
         String baseUrl = "http://veryValidWebsite.nl";
         Document document = new Document(baseUrl);
         Scrape expectedScrape = new Scrape
@@ -204,7 +236,7 @@ public class CrawlerTest {
                 new ArrayList<>()
         );
 
-        Mockito.when(crawler.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScrapper.GetScrape(document)).thenReturn(expectedScrape);
 
         // Act
@@ -213,7 +245,8 @@ public class CrawlerTest {
         Action lastScrape = crawler.GetLastAction();
 
         // Assert
-        Assert.assertEquals(expectedScrape, lastScrape);
+        Assert.assertTrue(lastScrape.UniquePagesFound.equals(1));
+        Assert.assertTrue(lastScrape.PagesExplored.equals(1));
     }
 
     @Test
@@ -221,7 +254,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = new Mockito().mock(IScraper.class);
-        Crawler crawler = new Crawler(mockScraper);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
 
         // Act
         Action lastScrape = crawler.GetLastAction();
@@ -231,48 +265,475 @@ public class CrawlerTest {
     }
 
     @Test
-    public void FindItem_ReturnsFoundItemSuccessful(){}
+    public void FindItem_ReturnsFoundItemSuccessful()
+    {
+        // Arrange
+        String baseUrl = "http://website.com";
+        Document document = new Document(baseUrl);
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = "Book";
+        String itemName = "The cool book";
+        List<String> authors = new ArrayList<>();
+        authors.add("MIroslav Zahariev");
+        Book bookToReturn = new Book(
+                "Fantasy",
+                authors,
+                "Books.nl",
+                "111"
+        );
+
+        Mockito.when(mockScraper.FindItem(document, itemType, itemName)).thenReturn(bookToReturn);
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
+
+        // Act
+        Item resultingItem = crawler.FindItem(baseUrl, itemType, itemName);
+
+        // Assert
+        Assert.assertTrue(resultingItem.getClass().getTypeName() == Book.class.getTypeName());
+        Assert.assertEquals(bookToReturn, resultingItem);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void FindItem_ThrowsIllegalArgumentException_WhenBaseUrlIsInvalid()
+    {
+        // Arrange
+        String baseUrl = "InvalidUrl";
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = "book";
+        String itemName = "bookBook";
+
+        // Act
+        crawler.FindItem(baseUrl, itemType, itemName);
+
+        // Assert
+//        Assert.fail();
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void FindItem_ThrowsIllegalArgumentException_WhenBaseUrlIsNull()
+    {
+        // Arrange
+        String baseUrl = null;
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = "book";
+        String itemName = "bookBook";
+
+        // Act
+        crawler.FindItem(baseUrl, itemType, itemName);
+
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void FindItem_ThrowsIllegalArgumentException_WhenItemTypeIsNotValid()
+    {
+        // Arrange
+        String baseUrl = "http://website.com";
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = "Car"; // parameter type is invalid
+                                // suported are book, movie, music
+        String itemName = "bookBook";
+
+        // Act
+        crawler.FindItem(baseUrl, itemType, itemName);
+
+        // Assert
+        //Assert.fail();
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void FindItem_ThrowsIllegalArgumentException_WhenItemTypeIsNull()
+    {
+        // Arrange
+        String baseUrl = "http://website.com";
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = null;
+        String itemName = "bookBook";
+
+        // Act
+        crawler.FindItem(baseUrl, itemType, itemName);
+
+        // Assert
+        //Assert.fail();
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsEmpty()
+    {
+        // Arrange
+        String baseUrl = "http://website.com";
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = "book";
+        String itemName = "";
+
+        // Act
+        crawler.FindItem(baseUrl, itemType, itemName);
+
+        // Assert
+        //Assert.fail();
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsNull()
+    {
+        // Arrange
+        String baseUrl = "http://website.com";
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String itemType = "book";
+        String itemName = null;
+
+        // Act
+        crawler.FindItem(baseUrl, itemType, itemName);
+
+        // Assert
+        //Assert.fail();
+    }
 
     @Test
-    public void FindItem_ThrowsIllegalArgumentException_WhenBaseUrlIsInvalid(){}
+    public void CrawlWebsite_ReturnsScrape_Successful()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String baseUrl = "http://website.com";
+        Document document = new Document(baseUrl);
+        Action action = new Action(1, 100L, 1,1,1);
+
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
+
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
+
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
+
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
+
+        Scrape newScrape = initialScrape;
+        music.add(new Music("Song", 1995, "mp3", "Group", "pop" ));
+        newScrape.setMusic(music);
+
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockScraper.GetScrape(document)).thenReturn(newScrape);
+
+        // Act
+        Scrape resultingScrape = crawler.CrawWebsite(baseUrl, initialScrape, action);
+
+        // Assert
+        Assert.assertFalse(resultingScrape.getMovies().isEmpty());
+        Assert.assertFalse(resultingScrape.getMusic().isEmpty());
+        Assert.assertEquals("John Smith", resultingScrape.getMovies().get(0).getDirector());
+        Assert.assertEquals("Group" ,resultingScrape.getMusic().get(0).getArtist());
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNull()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
+        String baseUrl = null;
+
+        Action action = new Action(1, 100L, 1,1,1);
+
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
+
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
+
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
+
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
+
+        // Act
+        crawler.CrawWebsite(baseUrl, initialScrape, action);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNotValid()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
+        String baseUrl = "not a valid URL";
+
+        Action action = new Action(1, 100L, 1,1,1);
+
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
+
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
+
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
+
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
+
+        // Act
+        crawler.CrawWebsite(baseUrl, initialScrape, action);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentScrapeIsNull()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
+        String baseUrl = "not a valid URL";
+
+        Action action = new Action(1, 100L, 1,1,1);
+
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
+
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
+
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
+
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
+
+        // Act
+        crawler.CrawWebsite(baseUrl, initialScrape, null);
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentActionIsNull()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
+        String baseUrl = "not a valid URL";
+
+        Action action = new Action(1, 100L, 1,1,1);
+
+        // Act
+        crawler.CrawWebsite(baseUrl, null, action);
+    }
 
     @Test
-    public void FindItem_ThrowsIllegalArgumentException_WhenBaseUrlIsNull(){}
+    public void CrawlWebsite_DoesNotUpdateScrape_WhenThereIsNoNewDataOnPageToScrape()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String baseUrl = "http://website.com";
+        Document document = new Document(baseUrl);
+        Action action = new Action(1, 100L, 1,1,1);
+
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
+
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
+
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
+
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
+
+        // Scraper will return scrape with no new data
+        Scrape newScrape = new Scrape(
+                "1", 100L,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>());
+
+
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockScraper.GetScrape(document)).thenReturn(newScrape);
+
+        // Act
+        Scrape resultingScrape = crawler.CrawWebsite(baseUrl, initialScrape, action);
+
+        // Assert
+        Assert.assertFalse(resultingScrape.getMovies().isEmpty());
+        Assert.assertTrue(resultingScrape.getMusic().isEmpty()); // no music was added this should be empty
+        Assert.assertEquals("John Smith", resultingScrape.getMovies().get(0).getDirector());
+    }
 
     @Test
-    public void FindItem_ThrowsIllegalArgumentException_WhenItemTypeIsNotValid(){}
+    public void CrawlWebsite_Successful_UntilSpecifiedDept()
+    {
+        // Arrange
+        IScraper mockScraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        String baseUrl = "http://website.com";
+        String secondbaseUrl = "http://secondWebsite.com";
+        Document document = new Document(baseUrl);
+        Document secondDocument = new Document(secondbaseUrl);
 
-    @Test
-    public void FindItem_ThrowsIllegalArgumentException_WhenItemTypeIsNull(){}
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
 
-    @Test
-    public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsEmpty(){}
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
 
-    @Test
-    public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsNull(){}
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
 
-    @Test
-    public void CrawlWebsite_ReturnsScrape_Successful(){}
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
 
-    @Test
-    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNull(){}
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
 
-    @Test
-    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenBaseUrlIsNotValid(){}
+        Scrape secondScrape = initialScrape;
+        music.add(new Music("Song", 1995, "mp3", "Group", "pop" ));
+        secondScrape.setMusic(music);
+//        String name, Integer year, String format, String genre, List<String> author, String publisher, String ISBN
+        books.add(new Book(
+                "The new Book",
+                1996,
+                "electronic",
+                "History",
+                new ArrayList<>(),
+                "books.nl",
+                "1234")
+        );
+        Scrape thirdScrape = new Scrape("3",100L, new ArrayList<>(), new ArrayList<>(), books);
 
-    @Test
-    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentScrapeIsNull(){}
+        Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
+        Mockito.when(mockDocumentRetriever.GetDocument(secondbaseUrl)).thenReturn(secondDocument);
+        Mockito.when(mockScraper.GetScrape(document)).thenReturn(secondScrape);
+        Mockito.when(mockScraper.GetScrape(secondDocument)).thenReturn(thirdScrape);
 
-    @Test
-    public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentActionIsNull(){}
+        // Act
+        Scrape resultingScrape = crawler.CrawWholeWebsite(baseUrl);
 
-    @Test
-    public void CrawlWebsite_DoesNotUpdateScrape_WhenThereIsNoNewDataOnPageToScrape(){}
+        // Assert
+        Assert.assertFalse(resultingScrape.getMovies().isEmpty());
+        Assert.assertFalse(resultingScrape.getMusic().isEmpty());
+        Assert.assertEquals("John Smith", resultingScrape.getMovies().get(0).getDirector());
+        Assert.assertEquals("Group" ,resultingScrape.getMusic().get(0).getArtist());
+    }
 
-    @Test
-    public void CrawlWebsite_UpdatesDataInScrape_WhenThereIsNewDataInThePage(){}
-
-    @Test
-    public void CrawlWebsite_Successful_UntilSpecifiedDept(){}
+//    @Test
+//    public void DoStuff(){
+//        try
+//        {
+//            IScraper Scrapper = new Scraper();
+//
+//            IDocumentRetriever documentRetriever = new DocumentRetriever();
+//
+//            Crawler crawler = new Crawler(Scrapper, documentRetriever);
+//
+//            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//        }
+//        catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }
 
