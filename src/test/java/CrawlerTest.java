@@ -200,12 +200,9 @@ public class CrawlerTest {
 
         // Act
         crawler.CrawWholeWebsite(null);
-
-        // Assert
-        Assert.fail();
     }
 
-    @Test
+    @Test (expected = IllegalArgumentException.class)
     public void CrawlWHoleWebsite_ThrowsIllegalArgumentException_WhenNullUrlIsPassed()
     {
         // Arrange
@@ -217,8 +214,6 @@ public class CrawlerTest {
         // Act
         crawler.CrawWholeWebsite(null);
 
-        // Assert
-        Assert.fail();
     }
 
     @Test
@@ -247,7 +242,8 @@ public class CrawlerTest {
         Action lastScrape = crawler.GetLastAction();
 
         // Assert
-        Assert.assertEquals(expectedScrape, lastScrape);
+        Assert.assertTrue(lastScrape.UniquePagesFound.equals(1));
+        Assert.assertTrue(lastScrape.PagesExplored.equals(1));
     }
 
     @Test
@@ -287,13 +283,12 @@ public class CrawlerTest {
 
         Mockito.when(mockScraper.FindItem(document, itemType, itemName)).thenReturn(bookToReturn);
         Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
-        Mockito.when(crawler.FindItem(baseUrl, itemType, itemName)).thenCallRealMethod();
 
         // Act
         Item resultingItem = crawler.FindItem(baseUrl, itemType, itemName);
 
         // Assert
-        Assert.assertTrue(resultingItem.getClass() == Book.class);
+        Assert.assertTrue(resultingItem.getClass().getTypeName() == Book.class.getTypeName());
         Assert.assertEquals(bookToReturn, resultingItem);
     }
 
@@ -329,8 +324,6 @@ public class CrawlerTest {
         // Act
         crawler.FindItem(baseUrl, itemType, itemName);
 
-        // Assert
-        //Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -370,7 +363,7 @@ public class CrawlerTest {
         //Assert.fail();
     }
 
-    @Test
+    @Test (expected = IllegalArgumentException.class)
     public void FindItem_ThrowsIllegalArgumentException_WhenItemValueIsEmpty()
     {
         // Arrange
@@ -415,7 +408,6 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String baseUrl = "http://website.com";
         Document document = new Document(baseUrl);
-//        Integer id, String timeElapsed, Integer pagesExplored, Integer uniquePagesFound, Integer searchDepth
         Action action = new Action(1, "100", 1,1,1);
 
         List<Book> books = new ArrayList<>();
@@ -445,7 +437,8 @@ public class CrawlerTest {
         );
 
         Scrape newScrape = initialScrape;
-        newScrape.Music.add(new Music("Song", 1995, "mp3", "Group" ));
+        music.add(new Music("Song", 1995, "mp3", "Group" ));
+        newScrape.setMusic(music);
 
         Mockito.when(mockDocumentRetriever.GetDocument(baseUrl)).thenReturn(document);
         Mockito.when(mockScraper.GetScrape(document)).thenReturn(newScrape);
@@ -454,13 +447,10 @@ public class CrawlerTest {
         Scrape resultingScrape = crawler.CrawWebsite(baseUrl, initialScrape, action);
 
         // Assert
-        Assert.assertFalse(resultingScrape.Movies.isEmpty());
-        Assert.assertFalse(resultingScrape.Music.isEmpty());
-        Assert.assertEquals("John Smith", resultingScrape.Movies.get(0).Director);
-        Assert.assertEquals("Group" ,resultingScrape.Music.get(0).Artist);
-        Assert.assertTrue(crawler.GetLastAction().PagesExplored == 2);
-        Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 2);
-        Assert.assertTrue(crawler.GetLastAction().Id == 1);
+        Assert.assertFalse(resultingScrape.getMovies().isEmpty());
+        Assert.assertFalse(resultingScrape.getMusic().isEmpty());
+        Assert.assertEquals("John Smith", resultingScrape.getMovies().get(0).getDirector());
+        Assert.assertEquals("Group" ,resultingScrape.getMusic().get(0).getArtist());
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -468,7 +458,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = null;
 
         Action action = new Action(1, "100", 1,1,1);
@@ -501,9 +492,6 @@ public class CrawlerTest {
 
         // Act
         crawler.CrawWebsite(baseUrl, initialScrape, action);
-
-        // Assert
-        Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -511,7 +499,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = "not a valid URL";
 
         Action action = new Action(1, "100", 1,1,1);
@@ -544,9 +533,6 @@ public class CrawlerTest {
 
         // Act
         crawler.CrawWebsite(baseUrl, initialScrape, action);
-
-        // Assert
-        Assert.fail();
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -554,7 +540,8 @@ public class CrawlerTest {
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = "not a valid URL";
 
         Action action = new Action(1, "100", 1,1,1);
@@ -587,26 +574,21 @@ public class CrawlerTest {
 
         // Act
         crawler.CrawWebsite(baseUrl, initialScrape, null);
-
-        // Assert
-        Assert.fail();
     }
 
-    @Test
+    @Test (expected = IllegalArgumentException.class)
     public void CrawlWebsite_ThrowsIllegalArgumentException_WhenCurrentActionIsNull()
     {
         // Arrange
         IScraper mockScraper = Mockito.mock(IScraper.class);
-        Crawler crawler = Mockito.mock(Crawler.class);
+        IDocumentRetriever mockRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = "not a valid URL";
 
         Action action = new Action(1, "100", 1,1,1);
 
         // Act
         crawler.CrawWebsite(baseUrl, null, action);
-
-        // Assert
-        Assert.fail();
     }
 
     @Test
@@ -661,12 +643,9 @@ public class CrawlerTest {
         Scrape resultingScrape = crawler.CrawWebsite(baseUrl, initialScrape, action);
 
         // Assert
-        Assert.assertFalse(resultingScrape.Movies.isEmpty());
-        Assert.assertTrue(resultingScrape.Music.isEmpty()); // no music was added this should be empty
-        Assert.assertEquals("John Smith", resultingScrape.Movies.get(0).Director);
-        Assert.assertTrue(crawler.GetLastAction().PagesExplored == 2);
-        Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 1);
-        Assert.assertTrue(crawler.GetLastAction().Id == 1);
+        Assert.assertFalse(resultingScrape.getMovies().isEmpty());
+        Assert.assertTrue(resultingScrape.getMusic().isEmpty()); // no music was added this should be empty
+        Assert.assertEquals("John Smith", resultingScrape.getMovies().get(0).getDirector());
     }
 
     @Test
@@ -708,7 +687,8 @@ public class CrawlerTest {
         );
 
         Scrape secondScrape = initialScrape;
-        secondScrape.Music.add(new Music("Song", 1995, "mp3", "Group" ));
+        music.add(new Music("Song", 1995, "mp3", "Group" ));
+        secondScrape.setMusic(music);
 //        String name, Integer year, String format, String genre, List<String> author, String publisher, String ISBN
         books.add(new Book(
                 "The new Book",
@@ -730,14 +710,21 @@ public class CrawlerTest {
         Scrape resultingScrape = crawler.CrawWholeWebsite(baseUrl);
 
         // Assert
-        Assert.assertFalse(resultingScrape.Movies.isEmpty());
-        Assert.assertFalse(resultingScrape.Music.isEmpty());
-        Assert.assertEquals("John Smith", resultingScrape.Movies.get(0).Director);
-        Assert.assertEquals("Group" ,resultingScrape.Music.get(0).Artist);
-        Assert.assertTrue(crawler.GetLastAction().PagesExplored == 2);
-        Assert.assertTrue(crawler.GetLastAction().UniquePagesFound == 2);
-        Assert.assertTrue(crawler.GetLastAction().Id == 1);
+        Assert.assertFalse(resultingScrape.getMovies().isEmpty());
+        Assert.assertFalse(resultingScrape.getMusic().isEmpty());
+        Assert.assertEquals("John Smith", resultingScrape.getMovies().get(0).getDirector());
+        Assert.assertEquals("Group" ,resultingScrape.getMusic().get(0).getArtist());
     }
 
+//    @Test
+//    public void DoStuff(){
+//        IScraper Scrapper = new Scraper();
+//
+//        IDocumentRetriever documentRetriever = new DocumentRetriever();
+//
+//        Crawler crawler = new Crawler(Scrapper, documentRetriever);
+//
+//        crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//    }
 }
 

@@ -2,8 +2,7 @@ import Database.Models.Action;
 import Interfaces.ICrawler;
 import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
-import Models.Item;
-import Models.Scrape;
+import Models.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.jar.JarEntry;
 
@@ -25,6 +25,16 @@ public class Crawler implements ICrawler {
 
     private Action lastScrape;
 
+    private int totalNumberOfPagesVisited;
+
+    private int numberOfUniquePagesVisited;
+
+    private List<String> allVisitedPages;
+
+    private List<String> uniqueVisitedPages;
+
+    private Scrape latestVersionOfScrape;
+
     public Crawler(IScraper scrapper, IDocumentRetriever documentRetriever){
 
         if(scrapper == null){
@@ -36,6 +46,12 @@ public class Crawler implements ICrawler {
 
         this.scraper = scrapper;
         this.documentRetriever = documentRetriever;
+        this.totalNumberOfPagesVisited = 0;
+        this.numberOfUniquePagesVisited = 0;
+        this.allVisitedPages = new ArrayList<>();
+        this.uniqueVisitedPages = new ArrayList<>();
+        this.latestVersionOfScrape =
+                new Scrape("1", 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public IDocumentRetriever getDocumentRetriever(){
@@ -47,7 +63,107 @@ public class Crawler implements ICrawler {
     }
 
     public Scrape CrawWebsite(String baseUrl, Scrape currentScrape, Action currentAction){
-        return null;
+
+        if(baseUrl == null){
+            throw  new IllegalArgumentException("Cannot scrape page. Base url is null");
+        }
+
+        if(baseUrl.isEmpty()){
+            throw  new IllegalArgumentException("Cannot scrape page. Base url is empty");
+        }
+
+        try {
+            URL url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            throw  new IllegalArgumentException("URL is not i a valid format");
+        }
+
+        if(currentAction == null){
+            throw new  IllegalArgumentException("Cannot craw website. Provided action is null");
+        }
+
+        if(currentScrape == null){
+            throw new IllegalArgumentException("Cannot craw website. Provided scrape is null");
+        }
+
+        numberOfUniquePagesVisited++;
+        totalNumberOfPagesVisited++;
+        uniqueVisitedPages.add(baseUrl);
+        allVisitedPages.add(baseUrl);
+
+        // Get document of base url
+        Document document = documentRetriever.GetDocument(baseUrl);
+
+        //Scrape document of base url
+        Scrape newScrape = scraper.GetScrape(document);
+
+        List<Music> musicToAdd = new ArrayList<>();
+        List<Movie> moviesToAdd = new ArrayList<>();
+        List<Book> booksToAdd = new ArrayList<>();
+
+        // Check if there is new movies to add;
+        for (Movie movie : newScrape.getMovies()){
+            if(!currentScrape.getMovies().contains(movie)){
+                moviesToAdd.add(movie);
+            }
+        }
+
+        // Check if there is new Music to add
+        for (Music music : newScrape.getMusic()){
+            if(!currentScrape.getMusic().contains(music)){
+                musicToAdd.add(music);
+            }
+        }
+
+        // Check if there is new books to add
+        for (Book book : newScrape.getBooks()){
+            if(!currentScrape.getBooks().contains(book)){
+                booksToAdd.add(book);
+            }
+        }
+
+        // Add all old data to the new list of data
+        musicToAdd.addAll(currentScrape.getMusic());
+        moviesToAdd.addAll(currentScrape.getMovies());
+        booksToAdd.addAll(currentScrape.getBooks());
+
+        // Update the scrape with data from current page
+        currentScrape.setMusic(musicToAdd);
+        currentScrape.setMovies(moviesToAdd);
+        currentScrape.setBooks(booksToAdd);
+        currentScrape.setTimeStamp(newScrape.getTimeStamp());
+        currentScrape.setId(newScrape.getId());
+
+        latestVersionOfScrape = currentScrape;
+
+        Elements links = document.select("a[href]");
+        List<String> allLinksOnPage = new ArrayList<>();
+
+        for(Element link: links){
+            allLinksOnPage.add(link.attr("href"));
+        }
+
+        // add links to number of all pages visited
+        for(String link: allLinksOnPage){
+            allVisitedPages.add(link);
+            totalNumberOfPagesVisited++;
+        }
+
+        //remove duplicates from list by adding them to a hashSet
+        HashSet<String> hashSetLinks = new HashSet<>();
+
+        // Remove items from hashSet that have already been visited.
+        for(String link : hashSetLinks){
+            if(uniqueVisitedPages.contains(link)){
+                hashSetLinks.remove(link);
+            }
+        }
+
+        for(String link : hashSetLinks){
+            CrawWebsite(link, currentScrape, currentAction);
+        }
+
+        return currentScrape;
     }
 
     /**
@@ -77,8 +193,44 @@ public class Crawler implements ICrawler {
      * Null if the website can't be craawed.
      */
     @Override
-    public Scrape CrawWholeWebsite(String baseUrl) {
-        return null;
+    public Scrape CrawWholeWebsite(String baseUrl)
+    {
+        // CREATE EMPTY ACTION
+        if(baseUrl == null){
+            throw  new IllegalArgumentException("Can not craw website because the provided url is null");
+        }
+
+        if(baseUrl.isEmpty()){
+            throw  new IllegalArgumentException("Can not craw website because the provided url is empty");
+        }
+
+        try {
+            URL url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            throw  new IllegalArgumentException("Cannot craw website because provided website is not valid");
+        }
+
+        numberOfUniquePagesVisited = 0;
+        numberOfUniquePagesVisited = 0;
+        this.allVisitedPages.clear();
+        this.uniqueVisitedPages.clear();
+        Action action = new Action(1, "0", 0,0,0);
+        Scrape scrape = new Scrape("1", 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+
+        Long startTime = System.currentTimeMillis();
+
+        Scrape finalScrape = CrawWebsite(baseUrl, scrape, action);
+        Long endTime = System.currentTimeMillis();
+
+        Long timeElapsed = endTime - startTime;
+
+        action.PagesExplored = totalNumberOfPagesVisited;
+        action.TimeElapsed = timeElapsed.toString();
+        action.UniquePagesFound = numberOfUniquePagesVisited;
+
+
+        StoreCrawRecord(action);
+        return finalScrape;
     }
 
     /**
@@ -96,6 +248,12 @@ public class Crawler implements ICrawler {
         }
         if(baseUrl.isEmpty()){
             throw new IllegalArgumentException("Base url cannot be empty");
+        }
+
+        try {
+            URL url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Url was not in a valid format");
         }
         if(itemType == null){
             throw new IllegalArgumentException("Item type cannot be null");
@@ -115,18 +273,20 @@ public class Crawler implements ICrawler {
             throw new IllegalArgumentException("Value cannot be empty");
         }
 
+        // ADD current link to number of unique pages
+
         Item item = null;
         Document document = documentRetriever.GetDocument(baseUrl);
         if(document != null)
         item = scraper.FindItem(document, itemType, value);
 
+        // ADd all those to the pages visited
+        // Remove every link I visited from this list.
         Elements links = document.select("a[href]");
 
         if (!links.isEmpty()){
             for (Element link : links){
-                document = documentRetriever.GetDocument(link.attr("href"));
-                if(document != null)
-                item = scraper.FindItem(document, itemType, value);
+                item = FindItem(link.attr("href"), itemType, value);
             }
         }
         return item;
