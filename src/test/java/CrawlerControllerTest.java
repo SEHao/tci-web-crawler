@@ -5,17 +5,11 @@ import Models.Book;
 import Models.Movie;
 import Models.Music;
 import Models.Scrape;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-
 import javax.ws.rs.core.Response;
-
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -94,7 +88,7 @@ public class CrawlerControllerTest {
     public void GetScrapeWholeWebsite_InternalServerError__WhenMoviesInAScrapeIsNull(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
-        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
         List<Movie> movies = null;
         List<Music> musics = new ArrayList<Music>();
         List<Book> books = new ArrayList<Book>();
@@ -102,8 +96,7 @@ public class CrawlerControllerTest {
         Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Document document = Jsoup.parse("localhost:8080/index.html");
-        Mockito.when(mockedScraper.GetScrape(document)).thenReturn(scrape);
+        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(scrape);
         Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
 
         // Assert
@@ -114,7 +107,7 @@ public class CrawlerControllerTest {
     public void GetScrapeWholeWebsite_InternalServerError__WhenBooksInAScrapeIsNull(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
-        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
         List<Movie> movies = new ArrayList<Movie>();
         List<Music> musics = new ArrayList<Music>();
         List<Book> books = null;
@@ -122,8 +115,7 @@ public class CrawlerControllerTest {
         Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Document document = Jsoup.parse("localhost:8080/index.html");
-        Mockito.when(mockedScraper.GetScrape(document)).thenReturn(scrape);
+        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(scrape);
         Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
 
         // Assert
@@ -134,7 +126,7 @@ public class CrawlerControllerTest {
     public void GetScrapeWholeWebsite_InternalServerError__WhenMusicInAScrapeIsNull(){
         // Arrange
         CrawlerController crawlerController = new CrawlerController();
-        IScraper mockedScraper = Mockito.mock(IScraper.class);
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
         List<Movie> movies = new ArrayList<Movie>();
         List<Music> musics = null;
         List<Book> books = new ArrayList<Book>();
@@ -142,8 +134,7 @@ public class CrawlerControllerTest {
         Scrape scrape = new Scrape("6", (long) 76467876, movies, musics, books);
 
         // Act
-        Document document = Jsoup.parse("localhost:8080/index.html");
-        Mockito.when(mockedScraper.GetScrape(document)).thenReturn(scrape);
+        Mockito.when(mockedCrawler.CrawWholeWebsite("localhost:8080/index.html")).thenReturn(scrape);
         Response response = crawlerController.GetScrapesOfWholeWebsite("localhost:8080/index.html");
 
         // Assert
@@ -220,7 +211,7 @@ public class CrawlerControllerTest {
         CrawlerController crawlerController = new CrawlerController();
 
         // Act
-        Response response = crawlerController.GetItem("localhost:8080", null, "Terminator 2");
+        Response response = crawlerController.GetItem("localhost:8080", "Movie", null);
 
         // Assert
         Assert.assertEquals(400, response.getStatus());
@@ -228,22 +219,40 @@ public class CrawlerControllerTest {
 
     @Test
     public void GetItem_BadRequest_WhenSearchValueISEmpty(){
+        // Arrange
+        CrawlerController crawlerController = new CrawlerController();
 
+        // Act
+        Response response = crawlerController.GetItem("localhost:8080", "Movie", "");
+
+        // Assert
+        Assert.assertEquals(400, response.getStatus());
     }
 
     @Test
     public void GetItem_InternalServerError_WhenFindItemReturnsNull(){
+        // Arrange
+        CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
-    }
+        // Act
+        Mockito.when(mockedCrawler.FindItem("localhost:8080", "Movie", "Lord Of The Rings")).thenReturn(null);
+        Response response = crawlerController.GetItem("localhost:8080", "Movie", null);
 
-    @Test
-    public void GetItem_InternalServerError_WhenResultInAScrapeIsNull(){
-
+        // Assert
+        Assert.assertEquals(500, response.getStatus());
     }
 
     @Test
     public void GetItem_Successful(){
+        // Arrange
+        CrawlerController crawlerController = new CrawlerController();
 
+        // Act
+        Response response = crawlerController.GetItem("localhost:8080", "Movie", "Lord Of The Rings");
+
+        // Assert
+        Assert.assertEquals(200, response.getStatus());
     }
 
     // endregion.
@@ -252,12 +261,28 @@ public class CrawlerControllerTest {
 
     @Test
     public void GetLastCrawlAction_InternalServerError_WhenGetLastActionReturnsNull(){
+        // Arrange
+        CrawlerController crawlerController = new CrawlerController();
+        ICrawler mockedCrawler = Mockito.mock(ICrawler.class);
 
+        // Act
+        Mockito.when(mockedCrawler.GetLastAction()).thenReturn(null);
+        Response response = crawlerController.GetLastCrawlAction();
+
+        // Assert
+        Assert.assertEquals(500, response.getStatus());
     }
 
     @Test
     public void GetCrawlAction_Successful(){
+        // Arrange
+        CrawlerController crawlerController = new CrawlerController();
 
+        // Act
+        Response response = crawlerController.GetLastCrawlAction();
+
+        // Assert
+        Assert.assertEquals(200, response.getStatus());
     }
 
     // endregion
