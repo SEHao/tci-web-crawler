@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import java.util.*;
 
 public class Scraper implements IScraper {
+    private final String mediaDetailsQuery = "div.media-details";
+    private final String mediaDetailRowsQuery = "table tbody tr";
 
     /**
      * Scrapes a Document produced by Jsoup and returns a Scrape object.
@@ -36,13 +38,13 @@ public class Scraper implements IScraper {
         scrape.setMusic(musics);
         scrape.setBooks(books);
 
-        Element mediaDetails = document.selectFirst("div.media-details");
+        Element mediaDetails = document.selectFirst(mediaDetailsQuery);
 
         if (mediaDetails == null) {
             return scrape;
         }
 
-        Elements rows = mediaDetails.select("table tbody tr");
+        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
 
         String category = "";
         for (Element row : rows) {
@@ -85,7 +87,7 @@ public class Scraper implements IScraper {
 
         movie.setName(mediaDetails.selectFirst("h1").text());
 
-        Elements rows = mediaDetails.select("table tbody tr");
+        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
 
         for (Element row : rows) {
             String key = row.selectFirst("th").text();
@@ -132,7 +134,7 @@ public class Scraper implements IScraper {
 
         book.setName(mediaDetails.selectFirst("h1").text());
 
-        Elements rows = mediaDetails.select("table tbody tr");
+        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
 
         for (Element row : rows) {
             String key = row.selectFirst("th").text();
@@ -176,7 +178,7 @@ public class Scraper implements IScraper {
     private Music parseMusic(Element mediaDetails) {
         Music music = new Music();
 
-        Elements rows = mediaDetails.select("table tbody tr");
+        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
 
         music.setName(mediaDetails.selectFirst("h1").text());
 
@@ -217,10 +219,10 @@ public class Scraper implements IScraper {
     @Override
     public Item FindItem(Document document, String type, String value) {
         Item item = null;
-        Element mediaDetails = document.selectFirst("div.media-details");
-        Elements rows = mediaDetails.select("table tbody tr");
+        Element mediaDetails = document.selectFirst(mediaDetailsQuery);
+        Elements rows = mediaDetails.select(mediaDetailRowsQuery);
 
-        for(Element row : rows) {
+        for (Element row : rows) {
             String key = row.selectFirst("th").text();
             String keyValue = row.selectFirst("td").text();
 
