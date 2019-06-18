@@ -2,7 +2,7 @@ package Interfaces;
 
 import Models.Item;
 import Models.Scrape;
-import org.w3c.dom.Document;
+import org.jsoup.nodes.Document;
 
 public interface IScraper {
 

@@ -1,7 +1,7 @@
 import Interfaces.IScraper;
 import Models.Item;
 import Models.Scrape;
-import org.w3c.dom.Document;
+import org.jsoup.nodes.Document;
 
 public class Scraper implements IScraper {
 
