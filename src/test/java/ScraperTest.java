@@ -154,8 +154,13 @@ public class ScraperTest {
         assertEquals(0, result.getMovies().size());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
+        // Arrange
+        Scraper scraper = new Scraper();
+
+        // Act
+        Scrape result = scraper.GetScrape(null);
     }
 
     @Test
