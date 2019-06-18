@@ -1,7 +1,4 @@
-import Models.Book;
-import Models.Movie;
-import Models.Music;
-import Models.Scrape;
+import Models.*;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -160,7 +157,20 @@ public class ScraperTest {
     }
 
     @Test
-    public void FindItem_ReturnItemObject() {
+    public void FindItem_ReturnMovieObject_WhenDetailsOfPageIsMovieItem() {
+        // Arrange
+        Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
+        String type = "Director";
+        String value = "Peter Jackson";
+        Movie expectedMovie = lordOfTheRingsMovie;
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Movie.class, result.getClass());
+        assertEquals(expectedMovie, result);
     }
 
     @Test
