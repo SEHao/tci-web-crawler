@@ -56,32 +56,7 @@ public class Scraper implements IScraper {
                 break;
             }
             case "Music": {
-                Music music = new Music();
-                music.setName(mediaDetails.selectFirst("h1").text());
-
-                for (Element row : rows) {
-                    String key = row.selectFirst("th").text();
-                    String value = row.selectFirst("td").text();
-                    switch (key) {
-                        case "Genre": {
-                            music.setGenre(value);
-                            break;
-                        }
-                        case "Format": {
-                            music.setFormat(value);
-                            break;
-                        }
-                        case "Year": {
-                            music.setYear(Integer.parseInt(value));
-                            break;
-                        }
-                        case "Artist": {
-                            music.setArtist(value);
-                            break;
-                        }
-                    }
-                }
-
+                Music music = this.parseMusic(mediaDetails);
                 musics.add(music);
                 break;
             }
@@ -93,8 +68,8 @@ public class Scraper implements IScraper {
     /**
      * Parse Element containing movie information into movie object.
      *
-     * @param mediaDetails Element which contains the details of movie
-     * @return Returns Movie object which was parsed from element
+     * @param mediaDetails Element which contains the details of movie.
+     * @return Returns Movie object which was parsed from element.
      */
     private Movie parseMovie(Element mediaDetails) {
         Movie movie = new Movie();
@@ -137,12 +112,11 @@ public class Scraper implements IScraper {
         return movie;
     }
 
-
     /**
      * Parse Element containing book information into book object.
      *
-     * @param mediaDetails Element which contains the details of book
-     * @return Returns Book object which was parsed from element
+     * @param mediaDetails Element which contains the details of book.
+     * @return Returns Book object which was parsed from element.
      */
     private Book parseBook(Element mediaDetails) {
         Book book = new Book();
@@ -182,6 +156,45 @@ public class Scraper implements IScraper {
         }
 
         return book;
+    }
+
+    /**
+     * Parse Element containing music information into music object.
+     *
+     * @param mediaDetails Element which contains the details of music.
+     * @return Returns Music object which was parsed from element.
+     */
+    private Music parseMusic(Element mediaDetails) {
+        Music music = new Music();
+
+        Elements rows = mediaDetails.select("table tbody tr");
+
+        music.setName(mediaDetails.selectFirst("h1").text());
+
+        for (Element row : rows) {
+            String key = row.selectFirst("th").text();
+            String value = row.selectFirst("td").text();
+            switch (key) {
+                case "Genre": {
+                    music.setGenre(value);
+                    break;
+                }
+                case "Format": {
+                    music.setFormat(value);
+                    break;
+                }
+                case "Year": {
+                    music.setYear(Integer.parseInt(value));
+                    break;
+                }
+                case "Artist": {
+                    music.setArtist(value);
+                    break;
+                }
+            }
+        }
+
+        return music;
     }
 
     /**

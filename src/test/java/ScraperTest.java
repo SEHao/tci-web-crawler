@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 public class ScraperTest {
     private Movie lordOfTheRingsMovie;
     private Book refactoringBook;
+    private Music elvisForeverMusic;
 
     @Before
     public void setUp() {
@@ -61,6 +62,14 @@ public class ScraperTest {
                 "Addison-Wesley Professional",
                 "978-0201485677"
         );
+
+        elvisForeverMusic = new Music(
+                "Elvis Forever",
+                2015,
+                "Vinyl",
+                "Elvis Presley",
+                "Rock"
+        );
     }
 
     @Test
@@ -68,14 +77,7 @@ public class ScraperTest {
         // Arrange
         Scraper scraper = new Scraper();
         Movie expectedMovie = lordOfTheRingsMovie;
-        File htmlTemplateFile = new File("res/TestFiles/lord_of_the_rings.html");
-        Document document = null;
-        try {
-            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
-            document = Jsoup.parse(htmlString);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
 
         // Act
         Scrape result = scraper.GetScrape(document);
@@ -95,18 +97,8 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithBook() {
         // Arrange
         Scraper scraper = new Scraper();
-
         Book expectedBook = refactoringBook;
-
-        File htmlTemplateFile = new File("res/TestFiles/refactoring.html");
-
-        Document document = null;
-        try {
-            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
-            document = Jsoup.parse(htmlString);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
 
         // Act
         Scrape result = scraper.GetScrape(document);
@@ -126,24 +118,8 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithMusic() {
         // Arrange
         Scraper scraper = new Scraper();
-
-        Music expectedMusic = new Music(
-                "Elvis Forever",
-                2015,
-                "Vinyl",
-                "Elvis Presley",
-                "Rock"
-        );
-
-        File htmlTemplateFile = new File("res/TestFiles/elvis_forever.html");
-
-        Document document = null;
-        try {
-            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
-            document = Jsoup.parse(htmlString);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        Music expectedMusic = elvisForeverMusic;
+        Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
 
         // Act
         Scrape result = scraper.GetScrape(document);
@@ -189,5 +165,26 @@ public class ScraperTest {
 
     @Test
     public void FindItem_ThrowIllegalArgumentException_WhenTypeParamDoesNotExists() {
+    }
+
+
+    /**
+     * Load HTML file and parse it into jsoup document
+     *
+     * @param path HTML relative file path.
+     * @return Returns jsoup document.
+     */
+    private Document loadDocumentFromFile(String path) {
+        File htmlTemplateFile = new File(path);
+
+        Document document = null;
+        try {
+            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
+            document = Jsoup.parse(htmlString);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        return document;
     }
 }
