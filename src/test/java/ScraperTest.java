@@ -1,9 +1,12 @@
+import Models.Book;
 import Models.Movie;
+import Models.Music;
 import Models.Scrape;
 import Scrapper.Scraper;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -14,11 +17,13 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class ScraperTest {
-    @Test
-    public void GetScrape_ReturnScrapeObject() {
-        // Arrange
-        Scraper scraper = new Scraper();
+    private Movie lordOfTheRingsMovie;
+    private Book refactoringBook;
+    private Music elvisForeverMusic;
+    private Scraper defaultScraper;
 
+    @Before
+    public void setUp() {
         List<String> writers = new ArrayList<>();
         writers.add("J.R.R. Tolkien");
         writers.add("Fran Walsh");
@@ -33,7 +38,7 @@ public class ScraperTest {
         stars.add("Diedrich Bader");
         stars.add("Stephen Root");
 
-        Movie expectedMovie = new Movie(
+        lordOfTheRingsMovie = new Movie(
                 "The Lord of the Rings: The Fellowship of the Ring",
                 2001,
                 "Blu-ray",
@@ -43,17 +48,42 @@ public class ScraperTest {
                 stars
         );
 
-        File htmlTemplateFile = new File("res/TestFiles/lord_of_the_rings.html");
-        Document document = null;
-        try {
-            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
-            document = Jsoup.parse(htmlString);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        List<String> authors = new ArrayList<>();
+        authors.add("Martin Fowler");
+        authors.add("Kent Beck");
+        authors.add("John Brant");
+        authors.add("William Opdyke");
+        authors.add("Don Roberts");
+
+        refactoringBook = new Book(
+                "Refactoring: Improving the Design of Existing Code",
+                1999,
+                "Hardcover",
+                "Tech",
+                authors,
+                "Addison-Wesley Professional",
+                "978-0201485677"
+        );
+
+        elvisForeverMusic = new Music(
+                "Elvis Forever",
+                2015,
+                "Vinyl",
+                "Elvis Presley",
+                "Rock"
+        );
+
+        defaultScraper = new Scraper();
+    }
+
+    @Test
+    public void GetScrape_ReturnScrapeObjectWithMovie_WhenPageContainsMovieDetails() {
+        // Arrange
+        Movie expectedMovie = lordOfTheRingsMovie;
+        Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
 
         // Act
-        Scrape result = scraper.GetScrape(document);
+        Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
         assertNotNull(result);
@@ -67,11 +97,67 @@ public class ScraperTest {
     }
 
     @Test
-    public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
+    public void GetScrape_ReturnScrapeObjectWithBook_WhenPageContainsBookDetails() {
+        // Arrange
+        Book expectedBook = refactoringBook;
+        Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
+
+        // Act
+        Scrape result = defaultScraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(1, result.getBooks().size());
+        assertEquals(0, result.getMusic().size());
+        assertEquals(0, result.getMovies().size());
+        assertEquals(expectedBook, result.getBooks().get(0));
     }
 
     @Test
-    public void GetScrape_ReturnNull_WhenDocumentContainsNoData() {
+    public void GetScrape_ReturnScrapeObjectWithMusic_WhenPageContainsMusicDetails() {
+        // Arrange
+        Music expectedMusic = elvisForeverMusic;
+        Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
+
+        // Act
+        Scrape result = defaultScraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(0, result.getBooks().size());
+        assertEquals(1, result.getMusic().size());
+        assertEquals(0, result.getMovies().size());
+        assertEquals(expectedMusic, result.getMusic().get(0));
+    }
+
+    @Test
+    public void GetScrape_ReturnObjectOfEmptyList_WhenPageDoesNotContainAnyItem() {
+        // Arrange
+        Document document = this.loadDocumentFromFile("res/TestFiles/catalog.html");
+
+        // Act
+        Scrape result = defaultScraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(0, result.getBooks().size());
+        assertEquals(0, result.getMusic().size());
+        assertEquals(0, result.getMovies().size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
+        // Act
+        Scrape result = defaultScraper.GetScrape(null);
     }
 
     @Test
@@ -96,5 +182,26 @@ public class ScraperTest {
 
     @Test
     public void FindItem_ThrowIllegalArgumentException_WhenTypeParamDoesNotExists() {
+    }
+
+
+    /**
+     * Load HTML file and parse it into jsoup document
+     *
+     * @param path HTML relative file path.
+     * @return Returns jsoup document.
+     */
+    private Document loadDocumentFromFile(String path) {
+        File htmlTemplateFile = new File(path);
+
+        Document document = null;
+        try {
+            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
+            document = Jsoup.parse(htmlString);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        return document;
     }
 }
