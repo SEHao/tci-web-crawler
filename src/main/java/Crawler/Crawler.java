@@ -1,3 +1,5 @@
+package Crawler;
+
 import Database.Models.Action;
 import Interfaces.ICrawler;
 import Interfaces.IDocumentRetriever;
@@ -7,7 +9,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,6 +53,10 @@ public class Crawler implements ICrawler {
         this.uniqueVisitedPages = new ArrayList<>();
         this.latestVersionOfScrape =
                 new Scrape("1", 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+
+    public Crawler(){
+
     }
 
     public IDocumentRetriever getDocumentRetriever(){
@@ -220,7 +225,7 @@ public class Crawler implements ICrawler {
         numberOfUniquePagesVisited = 0;
         this.allVisitedPages.clear();
         this.uniqueVisitedPages.clear();
-        Action action = new Action(1, "0", 0,0,0);
+        Action action = new Action(1, 0, 0,0,0);
         Scrape scrape = new Scrape("1", 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 
         Long startTime = System.currentTimeMillis();
@@ -231,7 +236,7 @@ public class Crawler implements ICrawler {
         Long timeElapsed = endTime - startTime;
 
         action.PagesExplored = totalNumberOfPagesVisited;
-        action.TimeElapsed = timeElapsed.toString();
+        action.TimeElapsed = timeElapsed;
         action.UniquePagesFound = numberOfUniquePagesVisited;
 
 

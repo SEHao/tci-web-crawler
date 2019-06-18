@@ -1,3 +1,5 @@
+package Scrapper;
+
 import Interfaces.IScraper;
 import Models.*;
 import org.jsoup.nodes.Document;

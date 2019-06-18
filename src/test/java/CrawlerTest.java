@@ -1,7 +1,9 @@
+import Crawler.Crawler;
 import Database.Models.Action;
 import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
 import Models.*;
+import Scrapper.Scraper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.jsoup.nodes.Document;
@@ -9,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.configuration.injection.MockInjection;
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class CrawlerTest {
@@ -80,11 +83,11 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsTrue_WhenAValidActionObjectIsPassed()
     {
         // Arrange
-        Action action = new Action(1,"100",1,1,1);
+        Action action = new Action(1,100,1,1,1);
         action.Id = 1;
         action.PagesExplored = 1;
         action.SearchDepth = 1;
-        action.TimeElapsed = "100";
+        action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
         IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
@@ -118,10 +121,10 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsFalse_WhenActionDoesNotHaveAnId()
     {
         // Arrange
-        Action action = new Action(null,"100", 1,1,1);
+        Action action = new Action(null,100L, 1,1,1);
         action.PagesExplored = 1;
         action.SearchDepth = 1;
-        action.TimeElapsed = "100";
+        action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
         IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
@@ -138,11 +141,11 @@ public class CrawlerTest {
     public void StoreCrawlRecord_ReturnsTrue_ValidatePrivateFieldHasBeenUpdated()
     {
         // Arrange
-        Action action = new Action(1,"100", 1,1,1);
+        Action action = new Action(1,100, 1,1,1);
         action.Id = 1;
         action.PagesExplored = 1;
         action.SearchDepth = 1;
-        action.TimeElapsed = "100";
+        action.TimeElapsed = 100;
         action.UniquePagesFound = 1;
         IScraper mockedScrapper = Mockito.mock(IScraper.class);
         IDocumentRetriever mockDocumentRetriever = Mockito.mock(IDocumentRetriever.class);
@@ -408,7 +411,7 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String baseUrl = "http://website.com";
         Document document = new Document(baseUrl);
-        Action action = new Action(1, "100", 1,1,1);
+        Action action = new Action(1, 100L, 1,1,1);
 
         List<Book> books = new ArrayList<>();
         List<Music> music = new ArrayList<>();
@@ -462,7 +465,7 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = null;
 
-        Action action = new Action(1, "100", 1,1,1);
+        Action action = new Action(1, 100L, 1,1,1);
 
         List<Book> books = new ArrayList<>();
         List<Music> music = new ArrayList<>();
@@ -503,7 +506,7 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = "not a valid URL";
 
-        Action action = new Action(1, "100", 1,1,1);
+        Action action = new Action(1, 100L, 1,1,1);
 
         List<Book> books = new ArrayList<>();
         List<Music> music = new ArrayList<>();
@@ -544,7 +547,7 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = "not a valid URL";
 
-        Action action = new Action(1, "100", 1,1,1);
+        Action action = new Action(1, 100L, 1,1,1);
 
         List<Book> books = new ArrayList<>();
         List<Music> music = new ArrayList<>();
@@ -585,7 +588,7 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockRetriever);
         String baseUrl = "not a valid URL";
 
-        Action action = new Action(1, "100", 1,1,1);
+        Action action = new Action(1, 100L, 1,1,1);
 
         // Act
         crawler.CrawWebsite(baseUrl, null, action);
@@ -600,7 +603,7 @@ public class CrawlerTest {
         Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
         String baseUrl = "http://website.com";
         Document document = new Document(baseUrl);
-        Action action = new Action(1, "100", 1,1,1);
+        Action action = new Action(1, 100L, 1,1,1);
 
         List<Book> books = new ArrayList<>();
         List<Music> music = new ArrayList<>();
@@ -716,22 +719,21 @@ public class CrawlerTest {
         Assert.assertEquals("Group" ,resultingScrape.getMusic().get(0).getArtist());
     }
 
-    @Test
-    public void DoStuff(){
-        try
-        {
-            IScraper Scrapper = new Scraper();
-
-            IDocumentRetriever documentRetriever = new DocumentRetriever();
-
-            Crawler crawler = new Crawler(Scrapper, documentRetriever);
-
-            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-
-    }
+//    @Test
+//    public void DoStuff(){
+//        try
+//        {
+//            IScraper Scrapper = new Scraper();
+//
+//            IDocumentRetriever documentRetriever = new DocumentRetriever();
+//
+//            Crawler crawler = new Crawler(Scrapper, documentRetriever);
+//
+//            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//        }
+//        catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }
 
