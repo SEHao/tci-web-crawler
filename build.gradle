@@ -5,7 +5,7 @@ plugins {
 group 'TCI'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -13,12 +13,8 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
-    // jsoup HTML parser library @ https://jsoup.org/
-    compile 'org.jsoup:jsoup:1.12.1'
-
-
-
-
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.28.2'
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.12.1'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
 }

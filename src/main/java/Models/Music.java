@@ -2,22 +2,25 @@ package Models;
 
 public class Music extends Item {
 
-    public String Artist;
+    private String artist;
 
     public String getArtist() {
-        return Artist;
+        return artist;
     }
 
     public void setArtist(String artist) {
-        Artist = artist;
+        this.artist = artist;
     }
 
     public Music(String artist) {
-        Artist = artist;
+        this.artist = artist;
     }
 
     public Music(String name, Integer year, String format, String artist) {
         super(name, year, format);
-        Artist = artist;
+        this.artist = artist;
+    }
+
+    public Music() {
     }
 }

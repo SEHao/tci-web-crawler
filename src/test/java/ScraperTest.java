@@ -1,8 +1,68 @@
+import Models.Movie;
+import Models.Scrape;
+import org.apache.commons.io.FileUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class ScraperTest {
     @Test
     public void GetScrape_ReturnScrapeObject() {
+        // Arrange
+        Scraper scraper = new Scraper();
+
+        List<String> writers = new ArrayList<>();
+        writers.add("J.R.R. Tolkien");
+        writers.add("Fran Walsh");
+        writers.add("Philippa Boyens");
+        writers.add("Peter Jackson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Ron Livingston");
+        stars.add("Jennifer Aniston");
+        stars.add("David Herman");
+        stars.add("Ajay Naidu");
+        stars.add("Diedrich Bader");
+        stars.add("Stephen Root");
+
+        Movie expectedMovie = new Movie(
+                "The Lord of the Rings: The Fellowship of the Ring",
+                2001,
+                "Blu-ray",
+                writers,
+                "Peter Jackson",
+                "Drama",
+                stars
+        );
+
+        File htmlTemplateFile = new File("res/TestFiles/lord_of_the_rings.html");
+        Document document = null;
+        try {
+            String htmlString = FileUtils.readFileToString(htmlTemplateFile, "UTF-8");
+            document = Jsoup.parse(htmlString);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        // Act
+        Scrape result = scraper.GetScrape(document);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.getId().isBlank());
+        assertFalse(result.getId().isEmpty());
+        assertNotNull(result.getTimeStamp());
+        assertEquals(0, result.getBooks().size());
+        assertEquals(0, result.getMusic().size());
+        assertEquals(1, result.getMovies().size());
+        assertEquals(expectedMovie, result.getMovies().get(0));
     }
 
     @Test
