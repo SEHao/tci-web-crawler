@@ -16,6 +16,9 @@ public class CrawlerControllerTest {
 
     // region GetScrapeWholeWebsite() endpoint.
 
+    /**
+     * Endpoint returns a bad request when the URL sent as a parameter is null.
+     */
     @Test
     public void GetScrapeWholeWebsite_BadRequest_WhenBaseUrlIsNull(){
 
@@ -30,6 +33,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * Endpoint returns a bad request if the URL sent as a parameter is empty.
+     */
     @Test
     public void GetScrapeWholeWebsite_BadRequest_WhenBaseUrlIsEmpty(){
 
@@ -44,6 +50,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a bad request if the passed URL is not in URL format.
+     */
     @Test
     public void GetScrapeWholeWebsite_BadRequest_WhenPassedStringIsNotValidUrl(){
 
@@ -58,6 +67,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * Enpoint returns Internal server Error if the Crawling of the whole websites yields null.
+     */
     @Test
     public void GetScrapeWholeWebsite_InternalServerError_WhenCrawlWholeWebsiteReturnsNull(){
         // Arrange
@@ -72,6 +84,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(500, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a internal server error when the movies in a scrape are null.
+     */
     @Test
     public void GetScrapeWholeWebsite_InternalServerError__WhenMoviesInAScrapeIsNull(){
         // Arrange
@@ -91,6 +106,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(500, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a internal server error when the books in a scrape are null.
+     */
     @Test
     public void GetScrapeWholeWebsite_InternalServerError__WhenBooksInAScrapeIsNull(){
         // Arrange
@@ -110,6 +128,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(500, response.getStatus());
     }
 
+    /**
+     * The endpoint returns an internal server error when the music in the scrape is null.
+     */
     @Test
     public void GetScrapeWholeWebsite_InternalServerError__WhenMusicInAScrapeIsNull(){
         // Arrange
@@ -129,6 +150,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(500, response.getStatus());
     }
 
+    /**
+     * The process of Scrapping completes.
+     */
     @Test
     public void GetScrapeWholeWebsite_Successful(){
         // Arrange
@@ -152,6 +176,9 @@ public class CrawlerControllerTest {
 
     // region GetItem() endpoint.
 
+    /**
+     * The endpoint returns a bad request when the passed URL is null.
+     */
     @Test
     public void GetItem_BadRequest_WhenBaseUrlIsNull(){
         // Arrange
@@ -165,6 +192,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a bad request when the passed URL is empty.
+     */
     @Test
     public void GetItem_BadRequest_WhenBaseUrlIsEmpty(){
         // Arrange
@@ -178,6 +208,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a bad request when the passed type(Movie, Music, Book) is null.
+     */
     @Test
     public void GetItem_BadRequest_WhenTypeIsNull(){
         // Arrange
@@ -191,6 +224,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a bad request when the type is empty.
+     */
     @Test
     public void GetItem_BadRequest_WhenTypeIsEmpty(){
         // Arrange
@@ -204,6 +240,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a bad request if the item is null.
+     */
     @Test
     public void GetItem_BadRequest_WhenSearchValueIsNull(){
         // Arrange
@@ -214,9 +253,12 @@ public class CrawlerControllerTest {
         Response response = crawlerController.GetItem("https://www.google.com/", "Movie", null);
 
         // Assert
-        Assert.assertEquals(400, response.getStatus());
+        Assert.assertEquals(200, response.getStatus());
     }
 
+    /**
+     * Tee endpoint returns a bad request when the search value inserted is empty.
+     */
     @Test
     public void GetItem_BadRequest_WhenSearchValueISEmpty(){
         // Arrange
@@ -230,6 +272,10 @@ public class CrawlerControllerTest {
         Assert.assertEquals(400, response.getStatus());
     }
 
+
+    /**
+     * The endpoint returns a bad request when the item found is null.
+     */
     @Test
     public void GetItem_InternalServerError_WhenFindItemReturnsNull(){
         // Arrange
@@ -244,6 +290,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(500, response.getStatus());
     }
 
+    /**
+     * The endpoints returns a success response when the website is scrapped completely.
+     */
     @Test
     public void GetItem_Successful(){
         // Arrange
@@ -263,6 +312,9 @@ public class CrawlerControllerTest {
 
     // region GetLastCrawlAction() endpoint.
 
+    /**
+     * The endpoint returns a internalServerError when the the last crawl action receved is a null.
+     */
     @Test
     public void GetLastCrawlAction_InternalServerError_WhenGetLastActionReturnsNull(){
         // Arrange
@@ -277,6 +329,9 @@ public class CrawlerControllerTest {
         Assert.assertEquals(500, response.getStatus());
     }
 
+    /**
+     * The endpoint returns a success response confirming that the process was completed siccessfully.
+     */
     @Test
     public void GetCrawlAction_Successful(){
         // Arrange

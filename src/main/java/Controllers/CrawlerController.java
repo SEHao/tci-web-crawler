@@ -24,6 +24,11 @@ public class CrawlerController {
         _crawler = new Crawler();
     }
 
+    /**
+     * Endpoint to return data for a website after scraping.
+     * @param baseUrl
+     * @return
+     */
     @GET
     @Path("scrape/{baseUrl}")
     @Produces({ MediaType.APPLICATION_JSON })
@@ -53,6 +58,13 @@ public class CrawlerController {
         return Response.ok(scrape).build();
     }
 
+    /**
+     * The endpoint returns bad request as Retrieving Item is null or empty.
+     * @param baseUrl
+     * @param type
+     * @param searchValue
+     * @return
+     */
     @GET
     @Path("scrape/{baseUri}/{type}/{value}")
     @Produces({ MediaType.APPLICATION_JSON })
@@ -82,6 +94,10 @@ public class CrawlerController {
         return Response.ok(item).build();
     }
 
+    /**
+     * Returns information about last crawled action.
+     * @return
+     */
     @GET
     @Path("last-crawl")
     @Produces({ MediaType.APPLICATION_JSON })
