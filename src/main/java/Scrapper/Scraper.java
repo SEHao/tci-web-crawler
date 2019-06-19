@@ -237,6 +237,11 @@ public class Scraper implements IScraper {
 
         Item item = null;
         Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
+
+        if (mediaDetails == null) {
+            return null;
+        }
+
         Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
         if (type.equals("Name")) {
