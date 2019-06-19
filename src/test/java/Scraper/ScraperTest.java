@@ -1,5 +1,6 @@
+package Scraper;
+
 import Models.*;
-import Scrapper.Scraper;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.apache.commons.io.FileUtils;
@@ -16,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ScraperTest {
@@ -32,6 +33,9 @@ public class ScraperTest {
     private static final String BOOK_RELATIVE_PATH = "res/TestFiles/refactoring.html";
     private static final String CATALOG_RELATIVE_PATH = "res/TestFiles/catalog.html";
 
+    /**
+     * For every test in this class, this method will populate default values for testing.
+     */
     @Before
     public void setUp() {
         List<String> writers = new ArrayList<>();
@@ -86,6 +90,9 @@ public class ScraperTest {
         defaultScraper = new Scraper();
     }
 
+    /**
+     * Test if GetScrape method returns Scrape object with 1 movie when valid parameter containing movie details is passed.
+     */
     @Test
     public void GetScrape_ReturnScrapeObjectWithMovie_WhenPageContainsMovieDetails() {
         // Arrange
@@ -96,16 +103,19 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(0, result.getBooks().size());
-        assertEquals(0, result.getMusic().size());
-        assertEquals(1, result.getMovies().size());
-        assertEquals(expectedMovie, result.getMovies().get(0));
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(0);
+        assertThat(result.getMusic().size()).isEqualTo(0);
+        assertThat(result.getMovies().size()).isEqualTo(1);
+        assertThat(result.getMovies().get(0)).isEqualTo(expectedMovie);
     }
 
+    /**
+     * Test if GetScrape method returns Scrape object with 1 book when valid parameter containing book details is passed.
+     */
     @Test
     public void GetScrape_ReturnScrapeObjectWithBook_WhenPageContainsBookDetails() {
         // Arrange
@@ -116,16 +126,19 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(1, result.getBooks().size());
-        assertEquals(0, result.getMusic().size());
-        assertEquals(0, result.getMovies().size());
-        assertEquals(expectedBook, result.getBooks().get(0));
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(1);
+        assertThat(result.getMusic().size()).isEqualTo(0);
+        assertThat(result.getMovies().size()).isEqualTo(0);
+        assertThat(result.getBooks().get(0)).isEqualTo(expectedBook);
     }
 
+    /**
+     * Test if GetScrape method returns Scrape object with 1 music when valid parameter containing music details is passed.
+     */
     @Test
     public void GetScrape_ReturnScrapeObjectWithMusic_WhenPageContainsMusicDetails() {
         // Arrange
@@ -136,18 +149,21 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(0, result.getBooks().size());
-        assertEquals(1, result.getMusic().size());
-        assertEquals(0, result.getMovies().size());
-        assertEquals(expectedMusic, result.getMusic().get(0));
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(0);
+        assertThat(result.getMusic().size()).isEqualTo(1);
+        assertThat(result.getMovies().size()).isEqualTo(0);
+        assertThat(result.getMusic().get(0)).isEqualTo(expectedMusic);
     }
 
+    /**
+     * Test if GetScrape method returns Scrape object with only empty list when GetScrape method cannot find any elements.
+     */
     @Test
-    public void GetScrape_ReturnObjectOfEmptyList_WhenPageDoesNotContainAnyItem() {
+    public void GetScrape_ReturnScrapeWithEmptyList_WhenPageDoesNotContainAnyItem() {
         // Arrange
         Document document = this.loadDocumentFromFile(CATALOG_RELATIVE_PATH);
 
@@ -155,15 +171,18 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(0, result.getBooks().size());
-        assertEquals(0, result.getMusic().size());
-        assertEquals(0, result.getMovies().size());
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(0);
+        assertThat(result.getMusic().size()).isEqualTo(0);
+        assertThat(result.getMovies().size()).isEqualTo(0);
     }
 
+    /**
+     * Test if Exception is caught when SelectorUnexpectedError occur caused by jsoup Document.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentThrowSelectorUnexpectedError() {
         // Arrange
@@ -175,6 +194,9 @@ public class ScraperTest {
         defaultScraper.GetScrape(document);
     }
 
+    /**
+     * Test if Exception is caught when SelectorUnexpectedError occur caused by jsoup Element.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenElementThrowSelectorUnexpectedError() {
         // Arrange
@@ -189,12 +211,22 @@ public class ScraperTest {
         defaultScraper.GetScrape(document);
     }
 
+    /**
+     * Test if Exception is thrown when null is passed as a jsoup Document.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
         // Act
         defaultScraper.GetScrape(null);
     }
 
+    /**
+     * Test if FindItem method returns Movie object when jsoup Document with Movie details is passed. It also
+     * test with different search values.
+     *
+     * @param type Type like 'Name', 'Genre', etc.
+     * @param value The search value.
+     */
     @Test
     @Parameters(method = "getMovieSearches")
     public void FindItem_ReturnMovieObject_WhenDetailsOfPageIsMovieItem(
@@ -208,11 +240,18 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(Movie.class, result.getClass());
-        assertEquals(expectedMovie, result);
+        assertThat(result).isNotNull();
+        assertThat(result.getClass()).isEqualTo(Movie.class);
+        assertThat(result).isEqualTo(expectedMovie);
     }
 
+    /**
+     * Test if FindItem method returns Book object when jsoup Document with Book details is passed. It also
+     * test with different search values.
+     *
+     * @param type Type like 'Name', 'Genre', etc.
+     * @param value The search value.
+     */
     @Test
     @Parameters(method = "getBookSearches")
     public void FindItem_ReturnBookObject_WhenDetailsOfPageIsBookItem(
@@ -226,11 +265,18 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(Book.class, result.getClass());
-        assertEquals(expectedBook, result);
+        assertThat(result).isNotNull();
+        assertThat(result.getClass()).isEqualTo(Book.class);
+        assertThat(result).isEqualTo(expectedBook);
     }
 
+    /**
+     * Test if FindItem method returns Music object when jsoup Document with Music details is passed. It also
+     * test with different search values.
+     *
+     * @param type Type like 'Name', 'Genre', etc.
+     * @param value The search value.
+     */
     @Test
     @Parameters(method = "getMusicSearches")
     public void FindItem_ReturnMusicObject_WhenDetailsOfPageIsMusicItem(
@@ -244,11 +290,14 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(Music.class, result.getClass());
-        assertEquals(expectedMusic, result);
+        assertThat(result).isNotNull();
+        assertThat(result.getClass()).isEqualTo(Music.class);
+        assertThat(result).isEqualTo(expectedMusic);
     }
 
+    /**
+     * Test if FindItem method handles null document parameter. Expect to throw IllegalArgumentException.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void FindItem_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
         // Arrange
@@ -260,6 +309,11 @@ public class ScraperTest {
         defaultScraper.FindItem(document, type, value);
     }
 
+    /**
+     * Test if FindItem method handles invalid type parameter. Expect to throw IllegalArgumentException.
+     *
+     * @param type Invalid string.
+     */
     @Test(expected = IllegalArgumentException.class)
     @Parameters(method = "getInvalidStrings")
     public void FindItem_ThrowIllegalArgumentException_WhenTypeParamIsNullOrEmpty(
@@ -273,6 +327,11 @@ public class ScraperTest {
         defaultScraper.FindItem(document, type, value);
     }
 
+    /**
+     * Test if FindItem method handles invalid value parameter. Expect to throw IllegalArgumentException.
+     *
+     * @param value Invalid string.
+     */
     @Test(expected = IllegalArgumentException.class)
     @Parameters(method = "getInvalidStrings")
     public void FindItem_ThrowIllegalArgumentException_WhenValueParamIsNullOrEmpty(
@@ -286,22 +345,30 @@ public class ScraperTest {
         defaultScraper.FindItem(document, type, value);
     }
 
+    /**
+     * Test if FindItem will return null when it cannot find anything.
+     */
     @Test
     public void FindItem_ReturnNull_WhenItemCannotBeFound() {
         // Arrange
         Document document = mock(Document.class);
         String type = "Name";
         String value = "Refactoring";
-        when(document.selectFirst(any(String.class)))
+        when(document.selectFirst(anyString()))
                 .thenReturn(null);
 
         // Act
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNull(result);
+        verify(document).selectFirst(anyString());
+        assertThat(result).isNull();
     }
 
+
+    /**
+     * Test if FindItem will return null when unknown search type is passed.
+     */
     @Test()
     public void FindItem_ReturnNull_WhenTypeParamDoesNotExists() {
         // Arrange
@@ -313,7 +380,7 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, invalidType, value);
 
         // Assert
-        assertNull(result);
+        assertThat(result).isNull();
     }
 
 

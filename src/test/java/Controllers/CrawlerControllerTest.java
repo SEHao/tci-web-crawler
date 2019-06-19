@@ -1,3 +1,5 @@
+package Controllers;
+
 import Controllers.CrawlerController;
 import Database.Models.Action;
 import Interfaces.ICrawler;
@@ -253,7 +255,7 @@ public class CrawlerControllerTest {
         Response response = crawlerController.GetItem("https://www.google.com/", "Movie", null);
 
         // Assert
-        Assert.assertEquals(200, response.getStatus());
+        Assert.assertEquals(400, response.getStatus());
     }
 
     /**

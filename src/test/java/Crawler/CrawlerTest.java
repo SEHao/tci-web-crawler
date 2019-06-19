@@ -1,17 +1,15 @@
-import Crawler.Crawler;
+package Crawler;
+
 import Database.Models.Action;
 import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
 import Models.*;
-import Scrapper.Scraper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.jsoup.nodes.Document;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.configuration.injection.MockInjection;
+
 import java.util.ArrayList;
-import java.net.URL;
 
 import java.util.List;
 
@@ -901,26 +899,5 @@ public class CrawlerTest {
         // Assert
         Assert.assertNull(result);
     }
-
-//    @Test
-//    public void DoStuff(){
-//        try
-//        {
-//            IScraper Scrapper = new Scraper();
-//
-//            IDocumentRetriever documentRetriever = new DocumentRetriever();
-//
-//            Crawler crawler = new Crawler(Scrapper, documentRetriever);
-//
-//            Item item =  crawler.FindItem("http://localhost/sample_site_to_crawl/", "movie", "Office Space");
-//
-//            if(item != null){
-//                System.out.println();
-//            }
-//        }
-//        catch (Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//    }
 }
 
