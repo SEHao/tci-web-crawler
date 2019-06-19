@@ -1,12 +1,14 @@
 import Models.*;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(JUnitParamsRunner.class)
 public class ScraperTest {
     private Movie lordOfTheRingsMovie;
     private Book refactoringBook;
@@ -187,11 +190,12 @@ public class ScraperTest {
     }
 
     @Test
-    public void FindItem_ReturnMovieObject_WhenDetailsOfPageIsMovieItem() {
+    @Parameters(method = "getMovieSearches")
+    public void FindItem_ReturnMovieObject_WhenDetailsOfPageIsMovieItem(
+            String type, String value
+    ) {
         // Arrange
         Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
-        String type = "Director";
-        String value = "Peter Jackson";
         Movie expectedMovie = lordOfTheRingsMovie;
 
         // Act
@@ -242,5 +246,16 @@ public class ScraperTest {
         }
 
         return document;
+    }
+
+    private static final Object[] getMovieSearches() {
+        return new Object[]{
+                new Object[]{"Genre", "Drama"},
+                new Object[]{"Format", "Blu-ray"},
+                new Object[]{"Year", "2001"},
+                new Object[]{"Director", "Peter Jackson"},
+                new Object[]{"Writers", "Fran Walsh"},
+                new Object[]{"Stars", "Ajay Naidu"}
+        };
     }
 }
