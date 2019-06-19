@@ -227,6 +227,28 @@ public class Scraper implements IScraper {
         Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
         Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
+        if (type.equals("Name")) {
+            String title = mediaDetails.selectFirst("h1").text();
+            if (title.contains(value)) {
+                item = this.parseSearchItem(mediaDetails);
+            }
+        } else {
+            for (Element row : rows) {
+                String key = row.selectFirst("th").text();
+                String keyValue = row.selectFirst("td").text();
+
+                if (key.equals(type) && keyValue.contains(value)) {
+                    item = this.parseSearchItem(mediaDetails);
+                    break;
+                }
+            }
+        }
+
+        return item;
+    }
+
+    private Item parseSearchItem(Element mediaDetails) {
+        Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
         String category = "";
         for (Element row : rows) {
             String key = row.selectFirst("th").text();
@@ -236,41 +258,15 @@ public class Scraper implements IScraper {
             }
         }
 
-        if (type.equals("Name")) {
-            String title = mediaDetails.selectFirst("h1").text();
-            if (title.contains(value)) {
-                switch (category) {
-                    case "Movies": {
-                        item = this.parseMovie(mediaDetails);
-                        break;
-                    }
-                    case "Books": {
-                        item = this.parseBook(mediaDetails);
-                        break;
-                    }
-                }
+        switch (category) {
+            case "Movies": {
+                return this.parseMovie(mediaDetails);
             }
-        } else {
-            for (Element row : rows) {
-                String key = row.selectFirst("th").text();
-                String keyValue = row.selectFirst("td").text();
-
-                if (key.equals(type) && keyValue.contains(value)) {
-                    switch (category) {
-                        case "Movies": {
-                            item = this.parseMovie(mediaDetails);
-                            break;
-                        }
-                        case "Books": {
-                            item = this.parseBook(mediaDetails);
-                            break;
-                        }
-                    }
-                    break;
-                }
+            case "Books": {
+                return this.parseBook(mediaDetails);
             }
         }
 
-        return item;
+        return null;
     }
 }
