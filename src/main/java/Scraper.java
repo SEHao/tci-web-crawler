@@ -265,6 +265,9 @@ public class Scraper implements IScraper {
             case "Books": {
                 return this.parseBook(mediaDetails);
             }
+            case "Music": {
+                return this.parseMusic(mediaDetails);
+            }
         }
 
         return null;
