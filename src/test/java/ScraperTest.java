@@ -1,7 +1,7 @@
 import Models.*;
+import Scrapper.Scraper;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import Scrapper.Scraper;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -248,24 +249,71 @@ public class ScraperTest {
         assertEquals(expectedMusic, result);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void FindItem_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
+        // Arrange
+        Document document = null;
+        String type = "Name";
+        String value = "The Lord of the Rings";
+
+        // Act
+        defaultScraper.FindItem(document, type, value);
     }
 
-    @Test
-    public void FindItem_ThrowIllegalArgumentException_WhenTypeParamIsNullOrEmpty() {
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters(method = "getInvalidStrings")
+    public void FindItem_ThrowIllegalArgumentException_WhenTypeParamIsNullOrEmpty(
+            String type
+    ) {
+        // Arrange
+        Document document = mock(Document.class);
+        String value = "The Lord of the Rings";
+
+        // Act
+        defaultScraper.FindItem(document, type, value);
     }
 
-    @Test
-    public void FindItem_ThrowIllegalArgumentException_WhenValueParamIsNullOrEmpty() {
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters(method = "getInvalidStrings")
+    public void FindItem_ThrowIllegalArgumentException_WhenValueParamIsNullOrEmpty(
+            String value
+    ) {
+        // Arrange
+        Document document = mock(Document.class);
+        String type = "Name";
+
+        // Act
+        defaultScraper.FindItem(document, type, value);
     }
 
     @Test
     public void FindItem_ReturnNull_WhenItemCannotBeFound() {
+        // Arrange
+        Document document = mock(Document.class);
+        String type = "Name";
+        String value = "Refactoring";
+        when(document.selectFirst(any(String.class)))
+                .thenReturn(null);
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNull(result);
     }
 
-    @Test
-    public void FindItem_ThrowIllegalArgumentException_WhenTypeParamDoesNotExists() {
+    @Test()
+    public void FindItem_ReturnNull_WhenTypeParamDoesNotExists() {
+        // Arrange
+        Document document = loadDocumentFromFile(MOVIE_RELATIVE_PATH);
+        String invalidType = "qweHJgyugVKHgj";
+        String value ="The Lord of the Rings";
+
+        // Act
+        Item result = defaultScraper.FindItem(document, invalidType, value);
+
+        // Assert
+        assertNull(result);
     }
 
 
@@ -335,6 +383,20 @@ public class ScraperTest {
                 new Object[]{"Format", "Vinyl"},
                 new Object[]{"Year", "2015"},
                 new Object[]{"Artist", "Elvis Presley"}
+        };
+    }
+
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Returns invalid strings
+     */
+    private static final Object[] getInvalidStrings() {
+        return new Object[]{
+                new Object[]{""},
+                new Object[]{" "},
+                new Object[]{"          "},
+                new Object[]{null},
         };
     }
 }
