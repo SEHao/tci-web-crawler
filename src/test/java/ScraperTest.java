@@ -208,6 +208,24 @@ public class ScraperTest {
     }
 
     @Test
+    @Parameters(method = "getBookSearches")
+    public void FindItem_ReturnBookObject_WhenDetailsOfPageIsBookItem(
+            String type, String value
+    ) {
+        // Arrange
+        Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
+        Book expectedBook = refactoringBook;
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Book.class, result.getClass());
+        assertEquals(expectedBook, result);
+    }
+
+    @Test
     public void FindItem_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
     }
 
@@ -257,6 +275,18 @@ public class ScraperTest {
                 new Object[]{"Director", "Peter Jackson"},
                 new Object[]{"Writers", "Fran Walsh"},
                 new Object[]{"Stars", "Ajay Naidu"}
+        };
+    }
+
+    private static final Object[] getBookSearches() {
+        return new Object[]{
+                new Object[]{"Name", "Refactoring"},
+                new Object[]{"Genre", "Tech"},
+                new Object[]{"Format", "Hardcover"},
+                new Object[]{"Year", "1999"},
+                new Object[]{"Authors", "Kent Beck"},
+                new Object[]{"Publisher", "Addison-Wesley Professional"},
+                new Object[]{"ISBN", "978-0201485677"}
         };
     }
 }
