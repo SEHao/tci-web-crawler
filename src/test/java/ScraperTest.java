@@ -1,7 +1,7 @@
 import Models.*;
+import Scrapper.Scraper;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
-import Scrapper.Scraper;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -287,6 +288,18 @@ public class ScraperTest {
 
     @Test
     public void FindItem_ReturnNull_WhenItemCannotBeFound() {
+        // Arrange
+        Document document = mock(Document.class);
+        String type = "Name";
+        String value = "Refactoring";
+        when(document.selectFirst(any(String.class)))
+                .thenReturn(null);
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNull(result);
     }
 
     @Test
