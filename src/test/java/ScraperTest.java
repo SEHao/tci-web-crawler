@@ -302,8 +302,18 @@ public class ScraperTest {
         assertNull(result);
     }
 
-    @Test
-    public void FindItem_ThrowIllegalArgumentException_WhenTypeParamDoesNotExists() {
+    @Test()
+    public void FindItem_ReturnNull_WhenTypeParamDoesNotExists() {
+        // Arrange
+        Document document = loadDocumentFromFile(MOVIE_RELATIVE_PATH);
+        String invalidType = "qweHJgyugVKHgj";
+        String value ="The Lord of the Rings";
+
+        // Act
+        Item result = defaultScraper.FindItem(document, invalidType, value);
+
+        // Assert
+        assertNull(result);
     }
 
 
