@@ -231,7 +231,7 @@ public class Scraper implements IScraper {
             String key = row.selectFirst("th").text();
             String keyValue = row.selectFirst("td").text();
 
-            if (key.equals(type) && keyValue.equals(value)) {
+            if (key.equals(type) && keyValue.contains(value)) {
                 item = this.parseMovie(mediaDetails);
                 break;
             }
