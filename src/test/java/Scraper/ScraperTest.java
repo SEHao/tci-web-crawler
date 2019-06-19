@@ -1,5 +1,6 @@
+package Scraper;
+
 import Models.*;
-import Scrapper.Scraper;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.apache.commons.io.FileUtils;

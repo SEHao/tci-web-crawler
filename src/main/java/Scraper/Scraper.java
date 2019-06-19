@@ -1,4 +1,4 @@
-package Scrapper;
+package Scraper;
 
 import Interfaces.IScraper;
 import Models.*;
