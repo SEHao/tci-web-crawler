@@ -231,6 +231,9 @@ public class Scraper implements IScraper {
         if (type == null || type.isEmpty() || type.isBlank()) {
             throw new IllegalArgumentException();
         }
+        if (value == null || value.isEmpty() || value.isBlank()) {
+            throw new IllegalArgumentException();
+        }
 
         Item item = null;
         Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
