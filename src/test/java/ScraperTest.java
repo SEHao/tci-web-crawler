@@ -259,8 +259,17 @@ public class ScraperTest {
         defaultScraper.FindItem(document, type, value);
     }
 
-    @Test
-    public void FindItem_ThrowIllegalArgumentException_WhenTypeParamIsNullOrEmpty() {
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters(method = "getInvalidType")
+    public void FindItem_ThrowIllegalArgumentException_WhenTypeParamIsNullOrEmpty(
+            String type
+    ) {
+        // Arrange
+        Document document = mock(Document.class);
+        String value = "The Lord of the Rings";
+
+        // Act
+        defaultScraper.FindItem(document, type, value);
     }
 
     @Test
@@ -342,6 +351,20 @@ public class ScraperTest {
                 new Object[]{"Format", "Vinyl"},
                 new Object[]{"Year", "2015"},
                 new Object[]{"Artist", "Elvis Presley"}
+        };
+    }
+
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Returns invalid type
+     */
+    private static final Object[] getInvalidType() {
+        return new Object[]{
+                new Object[]{""},
+                new Object[]{" "},
+                new Object[]{"          "},
+                new Object[]{null},
         };
     }
 }
