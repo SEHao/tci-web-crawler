@@ -9,17 +9,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Selector;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(JUnitParamsRunner.class)
@@ -32,6 +34,12 @@ public class ScraperTest {
     private static final String MUSIC_RELATIVE_PATH = "res/TestFiles/elvis_forever.html";
     private static final String BOOK_RELATIVE_PATH = "res/TestFiles/refactoring.html";
     private static final String CATALOG_RELATIVE_PATH = "res/TestFiles/catalog.html";
+
+    /**
+     * This rule prevent scraper from going into infinite loop.
+     */
+    @Rule
+    public Timeout scraperTimeout = new Timeout(1500, TimeUnit.MILLISECONDS);
 
     /**
      * For every test in this class, this method will populate default values for testing.
