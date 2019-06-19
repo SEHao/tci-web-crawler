@@ -260,7 +260,7 @@ public class ScraperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Parameters(method = "getInvalidType")
+    @Parameters(method = "getInvalidStrings")
     public void FindItem_ThrowIllegalArgumentException_WhenTypeParamIsNullOrEmpty(
             String type
     ) {
@@ -273,7 +273,7 @@ public class ScraperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    @Parameters(method = "getInvalidValue")
+    @Parameters(method = "getInvalidStrings")
     public void FindItem_ThrowIllegalArgumentException_WhenValueParamIsNullOrEmpty(
             String value
     ) {
@@ -366,23 +366,9 @@ public class ScraperTest {
     /**
      * This method is used to parameterised test
      *
-     * @return Returns invalid type
+     * @return Returns invalid strings
      */
-    private static final Object[] getInvalidType() {
-        return new Object[]{
-                new Object[]{""},
-                new Object[]{" "},
-                new Object[]{"          "},
-                new Object[]{null},
-        };
-    }
-
-    /**
-     * This method is used to parameterised test
-     *
-     * @return Returns invalid value
-     */
-    private static final Object[] getInvalidValue() {
+    private static final Object[] getInvalidStrings() {
         return new Object[]{
                 new Object[]{""},
                 new Object[]{" "},
