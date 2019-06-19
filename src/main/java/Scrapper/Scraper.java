@@ -249,6 +249,13 @@ public class Scraper implements IScraper {
         return item;
     }
 
+
+    /**
+     * Parse Element containing search item information into item object.
+     *
+     * @param mediaDetails Element which contains the details of the search item.
+     * @return Returns Item object which was parsed from element.
+     */
     private Item parseSearchItem(Element mediaDetails) {
         Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
         String category = "";
