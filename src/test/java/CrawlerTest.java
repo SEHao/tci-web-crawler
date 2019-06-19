@@ -912,9 +912,9 @@ public class CrawlerTest {
 //
 //            Crawler crawler = new Crawler(Scrapper, documentRetriever);
 //
-//            Scrape result =  crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//            Item item =  crawler.FindItem("http://localhost/sample_site_to_crawl/", "movie", "Office Space");
 //
-//            if(result != null){
+//            if(item != null){
 //                System.out.println();
 //            }
 //        }
