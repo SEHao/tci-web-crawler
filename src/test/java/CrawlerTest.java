@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.configuration.injection.MockInjection;
 import java.util.ArrayList;
+import java.net.URL;
 
 import java.util.List;
 
@@ -832,6 +833,75 @@ public class CrawlerTest {
         Assert.assertEquals(initialScrape, resultingScrape);
     }
 
+    /**
+     * Checks an unchanged scrape is returned when a craw is performed on a url outside of the original domain
+     * Thus preventing infinite scrapes of websites.
+     */
+    @Test
+    public void CrawWebsite_ReturnsLatestCraw_WhenProvidedUrlIsNotPartOfDomain(){
+
+        // Arrange
+        IScraper mockScraper = new Mockito().mock(IScraper.class);
+        IDocumentRetriever mockDocumentRetriever = new Mockito().mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(mockScraper, mockDocumentRetriever);
+        Action action = new Action(1, 100L, 1,1,1);
+        String baseUrl = "http://baseurl.com";
+        List<Book> books = new ArrayList<>();
+        List<Music> music = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
+
+        List<String> writters = new ArrayList<>();
+        writters.add("Jack Johnson");
+
+        List<String> stars = new ArrayList<>();
+        stars.add("Johny Depp");
+
+        Movie movie = new Movie(
+                writters,
+                "John Smith",
+                "Thriller",
+                stars
+        );
+        movies.add(movie);
+
+        Scrape initialScrape = new Scrape(
+                "1",
+                100L,
+                movies,
+                music,
+                books
+        );
+
+        crawler.SetDomainName("wrongDomainName.com");
+
+        //Act
+        Scrape resultingScrape = crawler.CrawWebsite(baseUrl, initialScrape, action);
+
+        // Assert
+        Assert.assertEquals(initialScrape, resultingScrape);
+    }
+
+    /**
+     * Checks an null is returned when a FindItem is performed on a url outside of the original domain
+     * Thus preventing infinite scrapes of websites.
+     */
+    @Test
+    public void FindItem_ReturnsNull_WhenProvidedUrlIsNotPartOfDomain(){
+
+        // Arrange
+        IScraper scraper = Mockito.mock(IScraper.class);
+        IDocumentRetriever documentRetriever = Mockito.mock(IDocumentRetriever.class);
+        Crawler crawler = new Crawler(scraper, documentRetriever);
+        crawler.SetDomainName("badDomain");
+        String baseURl = "http://goodDomain.com";
+
+        // Act
+        Item result = crawler.FindItem(baseURl, "book", "theBook");
+
+        // Assert
+        Assert.assertNull(result);
+    }
+
 //    @Test
 //    public void DoStuff(){
 //        try
@@ -842,7 +912,11 @@ public class CrawlerTest {
 //
 //            Crawler crawler = new Crawler(Scrapper, documentRetriever);
 //
-//            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//            Scrape result =  crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//
+//            if(result != null){
+//                System.out.println();
+//            }
 //        }
 //        catch (Exception e){
 //            System.out.println(e.getMessage());

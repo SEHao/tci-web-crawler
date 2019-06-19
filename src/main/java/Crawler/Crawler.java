@@ -5,17 +5,14 @@ import Interfaces.ICrawler;
 import Interfaces.IDocumentRetriever;
 import Interfaces.IScraper;
 import Models.*;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.jar.JarEntry;
 
 
 public class Crawler implements ICrawler {
@@ -36,6 +33,8 @@ public class Crawler implements ICrawler {
 
     private Scrape latestVersionOfScrape;
 
+    private String domaninName;
+
     public Crawler(IScraper scrapper, IDocumentRetriever documentRetriever){
 
         if(scrapper == null){
@@ -53,6 +52,7 @@ public class Crawler implements ICrawler {
         this.uniqueVisitedPages = new ArrayList<>();
         this.latestVersionOfScrape =
                 new Scrape("1", 0L, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        domaninName = "";
     }
 
     public Crawler(){
@@ -65,6 +65,11 @@ public class Crawler implements ICrawler {
 
     public IScraper getScraper(){
         return this.scraper;
+    }
+
+    // Used Only for testing
+    public void SetDomainName(String domaninName){
+        this.domaninName = domaninName;
     }
 
 
@@ -90,6 +95,10 @@ public class Crawler implements ICrawler {
             URL url = new URL(baseUrl);
         } catch (MalformedURLException e) {
             throw  new IllegalArgumentException("URL is not i a valid format");
+        }
+
+        if(!baseUrl.contains(domaninName)){
+            return currentScrape;
         }
 
         if(currentAction == null){
@@ -224,7 +233,6 @@ public class Crawler implements ICrawler {
     @Override
     public Scrape CrawWholeWebsite(String baseUrl)
     {
-        // CREATE EMPTY ACTION
         if(baseUrl == null){
             throw  new IllegalArgumentException("Can not craw website because the provided url is null");
         }
@@ -235,6 +243,7 @@ public class Crawler implements ICrawler {
 
         try {
             URL url = new URL(baseUrl);
+            domaninName = url.getHost();
         } catch (MalformedURLException e) {
             throw  new IllegalArgumentException("Cannot craw website because provided website is not valid");
         }
@@ -281,6 +290,9 @@ public class Crawler implements ICrawler {
 
         try {
             URL url = new URL(baseUrl);
+            if(domaninName == ""){
+                domaninName = url.getHost();
+            }
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Url was not in a valid format");
         }
@@ -302,22 +314,59 @@ public class Crawler implements ICrawler {
             throw new IllegalArgumentException("Value cannot be empty");
         }
 
-        // ADD current link to number of unique pages
+        numberOfUniquePagesVisited = 0;
+        totalNumberOfPagesVisited = 0;
+        allVisitedPages.clear();
+        uniqueVisitedPages.clear();
+
+        uniqueVisitedPages.add(baseUrl);
+        allVisitedPages.add(baseUrl);
+        totalNumberOfPagesVisited++;
+        numberOfUniquePagesVisited++;
 
         Item item = null;
+        if(!baseUrl.contains(domaninName)){
+            return item;
+        }
         Document document = documentRetriever.GetDocument(baseUrl);
-        if(document != null)
-        item = scraper.FindItem(document, itemType, value);
+        if(document != null){
+            item = scraper.FindItem(document, itemType, value);
+        }
+        else return item;
 
-        // ADd all those to the pages visited
-        // Remove every link I visited from this list.
         Elements links = document.select("a[href]");
+        List<String> allLinksOnPage = new ArrayList<>();
 
-        if (!links.isEmpty()){
-            for (Element link : links){
-                item = FindItem(link.attr("href"), itemType, value);
+        for(Element link: links){
+            allLinksOnPage.add(link.attr("abs:href"));
+        }
+
+        // add links to number of all pages visited
+        for(String link: allLinksOnPage){
+            allVisitedPages.add(link);
+            totalNumberOfPagesVisited++;
+        }
+
+        //remove duplicates from list by adding them to a hashSet
+        HashSet<String> hashSetLinks = new HashSet<>(allLinksOnPage);
+        List<String> pagesToRemove = new ArrayList<>();
+
+        // Get items from hashSet that have already been visited.
+        for(String link : hashSetLinks){
+            if(uniqueVisitedPages.contains(link)){
+                pagesToRemove.add(link);
             }
         }
+
+        // Remove items from hash set that have already been visited
+        for(String page : pagesToRemove){
+            hashSetLinks.remove(page);
+        }
+
+        for(String link : hashSetLinks){
+            item =  FindItem(link, itemType, value);
+        }
+
         return item;
     }
 
