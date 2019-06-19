@@ -67,6 +67,15 @@ public class Crawler implements ICrawler {
         return this.scraper;
     }
 
+
+    /**
+     * Craws a page from the website and all other pages related to it recursively.
+     * Also upldates the latest scrape with any new information found on a page.
+     * @param baseUrl The base Url of the website that is to be crawed.
+     * @param currentScrape The latest scrape containing all movies, music and books found so far.
+     * @param currentAction The current action in which data for the craw is stored.
+     * @return The scrape after it has been updated with new data.
+     */
     public Scrape CrawWebsite(String baseUrl, Scrape currentScrape, Action currentAction){
 
         if(baseUrl == null){
@@ -99,8 +108,17 @@ public class Crawler implements ICrawler {
         // Get document of base url
         Document document = documentRetriever.GetDocument(baseUrl);
 
+        Scrape newScrape = null;
+
         //Scrape document of base url
-        Scrape newScrape = scraper.GetScrape(document);
+        if(document != null){
+            newScrape = scraper.GetScrape(document);
+        }
+        else
+        {
+            return currentScrape;
+        }
+
 
         List<Music> musicToAdd = new ArrayList<>();
         List<Movie> moviesToAdd = new ArrayList<>();
