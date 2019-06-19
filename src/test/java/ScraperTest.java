@@ -226,6 +226,24 @@ public class ScraperTest {
     }
 
     @Test
+    @Parameters(method = "getMusicSearches")
+    public void FindItem_ReturnMusicObject_WhenDetailsOfPageIsMusicItem(
+            String type, String value
+    ) {
+        // Arrange
+        Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
+        Music expectedMusic = elvisForeverMusic;
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Music.class, result.getClass());
+        assertEquals(expectedMusic, result);
+    }
+
+    @Test
     public void FindItem_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
     }
 
@@ -287,6 +305,16 @@ public class ScraperTest {
                 new Object[]{"Authors", "Kent Beck"},
                 new Object[]{"Publisher", "Addison-Wesley Professional"},
                 new Object[]{"ISBN", "978-0201485677"}
+        };
+    }
+
+    private static final Object[] getMusicSearches() {
+        return new Object[]{
+                new Object[]{"Name", "Forever"},
+                new Object[]{"Genre", "Rock"},
+                new Object[]{"Format", "Vinyl"},
+                new Object[]{"Year", "2015"},
+                new Object[]{"Artist", "Elvis Presley"}
         };
     }
 }
