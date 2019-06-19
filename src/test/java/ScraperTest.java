@@ -248,8 +248,15 @@ public class ScraperTest {
         assertEquals(expectedMusic, result);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void FindItem_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
+        // Arrange
+        Document document = null;
+        String type = "Name";
+        String value = "The Lord of the Rings";
+
+        // Act
+        defaultScraper.FindItem(document, type, value);
     }
 
     @Test
