@@ -1,13 +1,15 @@
-import Models.Book;
-import Models.Movie;
-import Models.Music;
-import Models.Scrape;
+import Models.*;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import Scrapper.Scraper;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Selector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,12 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+@RunWith(JUnitParamsRunner.class)
 public class ScraperTest {
     private Movie lordOfTheRingsMovie;
     private Book refactoringBook;
     private Music elvisForeverMusic;
     private Scraper defaultScraper;
+    private static final String MOVIE_RELATIVE_PATH = "res/TestFiles/lord_of_the_rings.html";
+    private static final String MUSIC_RELATIVE_PATH = "res/TestFiles/elvis_forever.html";
+    private static final String BOOK_RELATIVE_PATH = "res/TestFiles/refactoring.html";
+    private static final String CATALOG_RELATIVE_PATH = "res/TestFiles/catalog.html";
 
     @Before
     public void setUp() {
@@ -80,7 +89,7 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithMovie_WhenPageContainsMovieDetails() {
         // Arrange
         Movie expectedMovie = lordOfTheRingsMovie;
-        Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
+        Document document = this.loadDocumentFromFile(MOVIE_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -100,7 +109,7 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithBook_WhenPageContainsBookDetails() {
         // Arrange
         Book expectedBook = refactoringBook;
-        Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
+        Document document = this.loadDocumentFromFile(BOOK_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -120,7 +129,7 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithMusic_WhenPageContainsMusicDetails() {
         // Arrange
         Music expectedMusic = elvisForeverMusic;
-        Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
+        Document document = this.loadDocumentFromFile(MUSIC_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -139,7 +148,7 @@ public class ScraperTest {
     @Test
     public void GetScrape_ReturnObjectOfEmptyList_WhenPageDoesNotContainAnyItem() {
         // Arrange
-        Document document = this.loadDocumentFromFile("res/TestFiles/catalog.html");
+        Document document = this.loadDocumentFromFile(CATALOG_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -155,13 +164,88 @@ public class ScraperTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void GetScrape_ThrowIllegalArgumentException_WhenDocumentThrowSelectorUnexpectedError() {
+        // Arrange
+        Document document = mock(Document.class);
+        when(document.selectFirst("div.media-details"))
+                .thenThrow(Selector.SelectorParseException.class);
+
+        // Act
+        defaultScraper.GetScrape(document);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void GetScrape_ThrowIllegalArgumentException_WhenElementThrowSelectorUnexpectedError() {
+        // Arrange
+        Document document = mock(Document.class);
+        Element element = mock(Element.class);
+        when(element.select("table tbody tr"))
+                .thenThrow(Selector.SelectorParseException.class);
+        when(document.selectFirst("div.media-details"))
+                .thenReturn(element);
+
+        // Act
+        defaultScraper.GetScrape(document);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void GetScrape_ThrowIllegalArgumentException_WhenDocumentParamIsNull() {
         // Act
-        Scrape result = defaultScraper.GetScrape(null);
+        defaultScraper.GetScrape(null);
     }
 
     @Test
-    public void FindItem_ReturnItemObject() {
+    @Parameters(method = "getMovieSearches")
+    public void FindItem_ReturnMovieObject_WhenDetailsOfPageIsMovieItem(
+            String type, String value
+    ) {
+        // Arrange
+        Document document = this.loadDocumentFromFile(MOVIE_RELATIVE_PATH);
+        Movie expectedMovie = lordOfTheRingsMovie;
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Movie.class, result.getClass());
+        assertEquals(expectedMovie, result);
+    }
+
+    @Test
+    @Parameters(method = "getBookSearches")
+    public void FindItem_ReturnBookObject_WhenDetailsOfPageIsBookItem(
+            String type, String value
+    ) {
+        // Arrange
+        Document document = this.loadDocumentFromFile(BOOK_RELATIVE_PATH);
+        Book expectedBook = refactoringBook;
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Book.class, result.getClass());
+        assertEquals(expectedBook, result);
+    }
+
+    @Test
+    @Parameters(method = "getMusicSearches")
+    public void FindItem_ReturnMusicObject_WhenDetailsOfPageIsMusicItem(
+            String type, String value
+    ) {
+        // Arrange
+        Document document = this.loadDocumentFromFile(MUSIC_RELATIVE_PATH);
+        Music expectedMusic = elvisForeverMusic;
+
+        // Act
+        Item result = defaultScraper.FindItem(document, type, value);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Music.class, result.getClass());
+        assertEquals(expectedMusic, result);
     }
 
     @Test
@@ -203,5 +287,54 @@ public class ScraperTest {
         }
 
         return document;
+    }
+
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Parameters for searching for movie
+     */
+    private static final Object[] getMovieSearches() {
+        return new Object[]{
+                new Object[]{"Name", "The Lord of the Rings"},
+                new Object[]{"Genre", "Drama"},
+                new Object[]{"Format", "Blu-ray"},
+                new Object[]{"Year", "2001"},
+                new Object[]{"Director", "Peter Jackson"},
+                new Object[]{"Writers", "Fran Walsh"},
+                new Object[]{"Stars", "Ajay Naidu"}
+        };
+    }
+
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Parameters for searching for book
+     */
+    private static final Object[] getBookSearches() {
+        return new Object[]{
+                new Object[]{"Name", "Refactoring"},
+                new Object[]{"Genre", "Tech"},
+                new Object[]{"Format", "Hardcover"},
+                new Object[]{"Year", "1999"},
+                new Object[]{"Authors", "Kent Beck"},
+                new Object[]{"Publisher", "Addison-Wesley Professional"},
+                new Object[]{"ISBN", "978-0201485677"}
+        };
+    }
+
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Parameters for searching for music
+     */
+    private static final Object[] getMusicSearches() {
+        return new Object[]{
+                new Object[]{"Name", "Forever"},
+                new Object[]{"Genre", "Rock"},
+                new Object[]{"Format", "Vinyl"},
+                new Object[]{"Year", "2015"},
+                new Object[]{"Artist", "Elvis Presley"}
+        };
     }
 }
