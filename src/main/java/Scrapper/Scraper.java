@@ -225,6 +225,10 @@ public class Scraper implements IScraper {
      */
     @Override
     public Item FindItem(Document document, String type, String value) {
+        if (document == null) {
+            throw new IllegalArgumentException();
+        }
+
         Item item = null;
         Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
         Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
