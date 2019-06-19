@@ -25,6 +25,10 @@ public class ScraperTest {
     private Book refactoringBook;
     private Music elvisForeverMusic;
     private Scraper defaultScraper;
+    private static final String MOVIE_RELATIVE_PATH = "res/TestFiles/lord_of_the_rings.html";
+    private static final String MUSIC_RELATIVE_PATH = "res/TestFiles/elvis_forever.html";
+    private static final String BOOK_RELATIVE_PATH = "res/TestFiles/refactoring.html";
+    private static final String CATALOG_RELATIVE_PATH = "res/TestFiles/catalog.html";
 
     @Before
     public void setUp() {
@@ -84,7 +88,7 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithMovie_WhenPageContainsMovieDetails() {
         // Arrange
         Movie expectedMovie = lordOfTheRingsMovie;
-        Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
+        Document document = this.loadDocumentFromFile(MOVIE_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -104,7 +108,7 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithBook_WhenPageContainsBookDetails() {
         // Arrange
         Book expectedBook = refactoringBook;
-        Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
+        Document document = this.loadDocumentFromFile(BOOK_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -124,7 +128,7 @@ public class ScraperTest {
     public void GetScrape_ReturnScrapeObjectWithMusic_WhenPageContainsMusicDetails() {
         // Arrange
         Music expectedMusic = elvisForeverMusic;
-        Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
+        Document document = this.loadDocumentFromFile(MUSIC_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -143,7 +147,7 @@ public class ScraperTest {
     @Test
     public void GetScrape_ReturnObjectOfEmptyList_WhenPageDoesNotContainAnyItem() {
         // Arrange
-        Document document = this.loadDocumentFromFile("res/TestFiles/catalog.html");
+        Document document = this.loadDocumentFromFile(CATALOG_RELATIVE_PATH);
 
         // Act
         Scrape result = defaultScraper.GetScrape(document);
@@ -195,7 +199,7 @@ public class ScraperTest {
             String type, String value
     ) {
         // Arrange
-        Document document = this.loadDocumentFromFile("res/TestFiles/lord_of_the_rings.html");
+        Document document = this.loadDocumentFromFile(MOVIE_RELATIVE_PATH);
         Movie expectedMovie = lordOfTheRingsMovie;
 
         // Act
@@ -213,7 +217,7 @@ public class ScraperTest {
             String type, String value
     ) {
         // Arrange
-        Document document = this.loadDocumentFromFile("res/TestFiles/refactoring.html");
+        Document document = this.loadDocumentFromFile(BOOK_RELATIVE_PATH);
         Book expectedBook = refactoringBook;
 
         // Act
@@ -231,7 +235,7 @@ public class ScraperTest {
             String type, String value
     ) {
         // Arrange
-        Document document = this.loadDocumentFromFile("res/TestFiles/elvis_forever.html");
+        Document document = this.loadDocumentFromFile(MUSIC_RELATIVE_PATH);
         Music expectedMusic = elvisForeverMusic;
 
         // Act
@@ -284,6 +288,11 @@ public class ScraperTest {
         return document;
     }
 
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Parameters for searching for movie
+     */
     private static final Object[] getMovieSearches() {
         return new Object[]{
                 new Object[]{"Name", "The Lord of the Rings"},
@@ -296,6 +305,11 @@ public class ScraperTest {
         };
     }
 
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Parameters for searching for book
+     */
     private static final Object[] getBookSearches() {
         return new Object[]{
                 new Object[]{"Name", "Refactoring"},
@@ -308,6 +322,11 @@ public class ScraperTest {
         };
     }
 
+    /**
+     * This method is used to parameterised test
+     *
+     * @return Parameters for searching for music
+     */
     private static final Object[] getMusicSearches() {
         return new Object[]{
                 new Object[]{"Name", "Forever"},
