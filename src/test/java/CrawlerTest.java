@@ -832,21 +832,21 @@ public class CrawlerTest {
         Assert.assertEquals(initialScrape, resultingScrape);
     }
 
-    @Test
-    public void DoStuff(){
-        try
-        {
-            IScraper Scrapper = new Scraper();
-
-            IDocumentRetriever documentRetriever = new DocumentRetriever();
-
-            Crawler crawler = new Crawler(Scrapper, documentRetriever);
-
-            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
+//    @Test
+//    public void DoStuff(){
+//        try
+//        {
+//            IScraper Scrapper = new Scraper();
+//
+//            IDocumentRetriever documentRetriever = new DocumentRetriever();
+//
+//            Crawler crawler = new Crawler(Scrapper, documentRetriever);
+//
+//            crawler.CrawWholeWebsite("http://localhost/sample_site_to_crawl/");
+//        }
+//        catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 }
 
