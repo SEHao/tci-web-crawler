@@ -227,10 +227,28 @@ public class Scraper implements IScraper {
         Element mediaDetails = document.selectFirst(MEDIA_DETAILS_QUERY);
         Elements rows = mediaDetails.select(MEDIA_DETAIL_ROWS_QUERY);
 
+        String category = "";
+        for (Element row : rows) {
+            String key = row.selectFirst("th").text();
+            String keyValue = row.selectFirst("td").text();
+            if (key.equals("Category")) {
+                category = keyValue;
+            }
+        }
+
         if (type.equals("Name")) {
             String title = mediaDetails.selectFirst("h1").text();
             if (title.contains(value)) {
-                item = this.parseMovie(mediaDetails);
+                switch (category) {
+                    case "Movies": {
+                        item = this.parseMovie(mediaDetails);
+                        break;
+                    }
+                    case "Books": {
+                        item = this.parseBook(mediaDetails);
+                        break;
+                    }
+                }
             }
         } else {
             for (Element row : rows) {
@@ -238,12 +256,20 @@ public class Scraper implements IScraper {
                 String keyValue = row.selectFirst("td").text();
 
                 if (key.equals(type) && keyValue.contains(value)) {
-                    item = this.parseMovie(mediaDetails);
+                    switch (category) {
+                        case "Movies": {
+                            item = this.parseMovie(mediaDetails);
+                            break;
+                        }
+                        case "Books": {
+                            item = this.parseBook(mediaDetails);
+                            break;
+                        }
+                    }
                     break;
                 }
             }
         }
-
 
         return item;
     }
