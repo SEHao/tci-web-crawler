@@ -250,6 +250,7 @@ public class ScraperTest {
 
     private static final Object[] getMovieSearches() {
         return new Object[]{
+                new Object[]{"Name", "The Lord of the Rings"},
                 new Object[]{"Genre", "Drama"},
                 new Object[]{"Format", "Blu-ray"},
                 new Object[]{"Year", "2001"},
