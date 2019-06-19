@@ -16,7 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -96,14 +97,14 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(0, result.getBooks().size());
-        assertEquals(0, result.getMusic().size());
-        assertEquals(1, result.getMovies().size());
-        assertEquals(expectedMovie, result.getMovies().get(0));
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(0);
+        assertThat(result.getMusic().size()).isEqualTo(0);
+        assertThat(result.getMovies().size()).isEqualTo(1);
+        assertThat(result.getMovies().get(0)).isEqualTo(expectedMovie);
     }
 
     @Test
@@ -116,14 +117,14 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(1, result.getBooks().size());
-        assertEquals(0, result.getMusic().size());
-        assertEquals(0, result.getMovies().size());
-        assertEquals(expectedBook, result.getBooks().get(0));
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(1);
+        assertThat(result.getMusic().size()).isEqualTo(0);
+        assertThat(result.getMovies().size()).isEqualTo(0);
+        assertThat(result.getBooks().get(0)).isEqualTo(expectedBook);
     }
 
     @Test
@@ -136,14 +137,14 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(0, result.getBooks().size());
-        assertEquals(1, result.getMusic().size());
-        assertEquals(0, result.getMovies().size());
-        assertEquals(expectedMusic, result.getMusic().get(0));
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(0);
+        assertThat(result.getMusic().size()).isEqualTo(1);
+        assertThat(result.getMovies().size()).isEqualTo(0);
+        assertThat(result.getMusic().get(0)).isEqualTo(expectedMusic);
     }
 
     @Test
@@ -155,13 +156,13 @@ public class ScraperTest {
         Scrape result = defaultScraper.GetScrape(document);
 
         // Assert
-        assertNotNull(result);
-        assertFalse(result.getId().isBlank());
-        assertFalse(result.getId().isEmpty());
-        assertNotNull(result.getTimeStamp());
-        assertEquals(0, result.getBooks().size());
-        assertEquals(0, result.getMusic().size());
-        assertEquals(0, result.getMovies().size());
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getId()).isNotEmpty();
+        assertThat(result.getTimeStamp()).isNotNull();
+        assertThat(result.getBooks().size()).isEqualTo(0);
+        assertThat(result.getMusic().size()).isEqualTo(0);
+        assertThat(result.getMovies().size()).isEqualTo(0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -208,9 +209,9 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(Movie.class, result.getClass());
-        assertEquals(expectedMovie, result);
+        assertThat(result).isNotNull();
+        assertThat(result.getClass()).isEqualTo(Movie.class);
+        assertThat(result).isEqualTo(expectedMovie);
     }
 
     @Test
@@ -226,9 +227,9 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(Book.class, result.getClass());
-        assertEquals(expectedBook, result);
+        assertThat(result).isNotNull();
+        assertThat(result.getClass()).isEqualTo(Book.class);
+        assertThat(result).isEqualTo(expectedBook);
     }
 
     @Test
@@ -244,9 +245,9 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(Music.class, result.getClass());
-        assertEquals(expectedMusic, result);
+        assertThat(result).isNotNull();
+        assertThat(result.getClass()).isEqualTo(Music.class);
+        assertThat(result).isEqualTo(expectedMusic);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -299,7 +300,7 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
-        assertNull(result);
+        assertThat(result).isNull();
     }
 
     @Test()
@@ -313,7 +314,7 @@ public class ScraperTest {
         Item result = defaultScraper.FindItem(document, invalidType, value);
 
         // Assert
-        assertNull(result);
+        assertThat(result).isNull();
     }
 
 
