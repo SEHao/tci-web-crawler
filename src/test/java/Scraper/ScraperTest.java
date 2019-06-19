@@ -20,8 +20,7 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class ScraperTest {
@@ -355,13 +354,14 @@ public class ScraperTest {
         Document document = mock(Document.class);
         String type = "Name";
         String value = "Refactoring";
-        when(document.selectFirst(any(String.class)))
+        when(document.selectFirst(anyString()))
                 .thenReturn(null);
 
         // Act
         Item result = defaultScraper.FindItem(document, type, value);
 
         // Assert
+        verify(document).selectFirst(anyString());
         assertThat(result).isNull();
     }
 
